@@ -1,0 +1,24 @@
+# Base networking and device support
+network-manager
+ca-certificates
+curl
+openssh-client
+usbutils
+udev
+
+# POS peripherals
+cups
+libusb-1.0-0
+bluez
+
+# Minimal graphical kiosk
+xorg
+openbox
+lightdm
+lightdm-gtk-greeter
+xserver-xorg-input-libinput
+
+# Diagnostics and recovery
+rsync
+jq
+vim-tiny

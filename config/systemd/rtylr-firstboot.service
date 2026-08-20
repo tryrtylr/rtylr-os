@@ -1,0 +1,13 @@
+[Unit]
+Description=Rtylr first-boot provisioning
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=!/var/lib/rtylr/.firstboot-complete
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/rtylr/first-boot.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

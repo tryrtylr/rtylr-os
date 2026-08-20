@@ -1,0 +1,18 @@
+[Unit]
+Description=Rtylr device agent
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=rtylr
+ExecStart=/opt/rtylr/agent/rtylr-agent
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/rtylr/config /var/lib/rtylr /var/log/rtylr
+
+[Install]
+WantedBy=multi-user.target

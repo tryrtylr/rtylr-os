@@ -1,0 +1,44 @@
+# Rtylr OS initial appliance installer. No production secrets belong here.
+autoinstall:
+  version: 1
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+  timezone: Etc/UTC
+  identity:
+    hostname: rtylr-pos
+    username: rtylr
+    # Replaced by the build with RTYLR_INSTALL_PASSWORD_HASH.
+    password: "__RTYLR_INSTALL_PASSWORD_HASH__"
+  ssh:
+    install-server: false
+  storage:
+    layout:
+      name: direct
+  packages:
+    - network-manager
+    - ca-certificates
+    - curl
+    - cups
+    - libusb-1.0-0
+    - bluez
+    - xorg
+    - openbox
+    - lightdm
+    - lightdm-gtk-greeter
+    - xserver-xorg-input-libinput
+    - rsync
+    - jq
+  late-commands:
+    - curtin in-target -- mkdir -p /opt/rtylr/config /var/lib/rtylr /var/log/rtylr /usr/local/lib/rtylr /etc/lightdm/lightdm.conf.d
+    - curtin in-target -- cp /cdrom/rtylr-config/packages.list /opt/rtylr/config/packages.list
+    - curtin in-target -- cp /cdrom/rtylr-config/kiosk/session.sh /usr/local/lib/rtylr/session.sh
+    - curtin in-target -- cp /cdrom/rtylr-config/systemd/*.service /etc/systemd/system/
+    - curtin in-target -- cp /cdrom/rtylr-config/kiosk/autologin.conf /etc/lightdm/lightdm.conf.d/50-rtylr-autologin.conf
+    - curtin in-target -- cp /cdrom/scripts/first-boot.sh /usr/local/lib/rtylr/first-boot.sh
+    - curtin in-target -- chmod 0755 /usr/local/lib/rtylr/*.sh
+    - curtin in-target -- systemctl enable rtylr-firstboot.service
+    - curtin in-target -- systemctl enable rtylr-agent.service
+    - curtin in-target -- systemctl enable rtylr-pos.service
+    - curtin in-target -- systemctl enable NetworkManager
+    - curtin in-target -- systemctl enable lightdm
