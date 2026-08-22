@@ -10,5 +10,5 @@ SUMS="${ROOT_DIR}/cache/SHA256SUMS"
 [[ -f "$BASE" ]] || { printf 'Base ISO missing; run make download first.\n' >&2; exit 1; }
 curl --fail --location --silent --show-error --output "${SUMS}.part" "$SUMS_URL"
 mv "${SUMS}.part" "$SUMS"
-(cd "$(dirname "$BASE")" && grep "  ${BASE_NAME}$" "$SUMS" | sha256sum --check --strict -)
+(cd "$(dirname "$BASE")" && grep -E "^[[:xdigit:]]{64}[[:space:]]+\\*?${BASE_NAME}$" "$SUMS" | sha256sum --check --strict -)
 printf 'Verified %s\n' "$BASE"

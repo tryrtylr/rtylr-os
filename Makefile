@@ -1,9 +1,15 @@
 SHELL := /bin/bash
 
-.PHONY: check download verify iso clean
+.PHONY: check check-build test download verify iso validate-iso clean
 
 check:
+	./scripts/check-source.sh
+
+check-build:
 	./scripts/check-dependencies.sh
+
+test:
+	PYTHONPATH=src/rtylr-shell python3 -m unittest discover -s tests -v
 
 download:
 	./scripts/download-base.sh
@@ -11,8 +17,11 @@ download:
 verify:
 	./scripts/verify-base.sh
 
-iso: check download verify
+iso: check check-build download verify
 	./scripts/build.sh
+
+validate-iso:
+	./scripts/validate-iso.sh
 
 clean:
 	rm -rf build work tmp dist

@@ -1,0 +1,35 @@
+{
+  "brand": {
+    "name": "Rtylr OS",
+    "wordmark": "RTYLR",
+    "accent": "#7c5cff"
+  },
+  "pos": {
+    "name": "Your POS",
+    "command": [
+      "/opt/rtylr/pos/rtylr-pos"
+    ],
+    "working_directory": "/opt/rtylr/pos",
+    "auto_start": true,
+    "restart": {
+      "max_attempts": 5,
+      "window_seconds": 60,
+      "backoff_seconds": [
+        1,
+        2,
+        5,
+        10,
+        30
+      ]
+    }
+  },
+  "ui": {
+    "show_clock": true,
+    "touch_control": true
+  },
+  "support": {
+    "label": "Rtylr support",
+    "url": "",
+    "phone": ""
+  }
+}

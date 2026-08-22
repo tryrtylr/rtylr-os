@@ -2,6 +2,7 @@
 Description=Rtylr device agent
 After=network-online.target
 Wants=network-online.target
+ConditionPathExists=/opt/rtylr/agent/rtylr-agent
 
 [Service]
 Type=simple
@@ -12,6 +13,7 @@ RestartSec=5
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
+PrivateTmp=true
 ReadWritePaths=/opt/rtylr/config /var/lib/rtylr /var/log/rtylr
 
 [Install]

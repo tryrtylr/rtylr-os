@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_config xmlns="http://openbox.org/3.4/rc">
+  <resistance>
+    <strength>10</strength>
+    <screen_edge_strength>20</screen_edge_strength>
+  </resistance>
+  <focus>
+    <focusNew>yes</focusNew>
+    <followMouse>no</followMouse>
+    <focusLast>yes</focusLast>
+    <underMouse>no</underMouse>
+    <focusDelay>200</focusDelay>
+    <raiseOnFocus>no</raiseOnFocus>
+  </focus>
+  <placement>
+    <policy>Smart</policy>
+    <center>yes</center>
+    <monitor>Primary</monitor>
+  </placement>
+  <theme>
+    <name>Onyx</name>
+    <titleLayout></titleLayout>
+    <keepBorder>no</keepBorder>
+  </theme>
+  <desktops>
+    <number>1</number>
+    <firstdesk>1</firstdesk>
+    <names><name>Rtylr</name></names>
+    <popupTime>0</popupTime>
+  </desktops>
+  <keyboard>
+    <keybind key="C-A-r">
+      <action name="Execute"><command>/usr/local/bin/rtylr-shell --recovery</command></action>
+    </keybind>
+    <keybind key="C-A-p">
+      <action name="Execute"><command>/usr/local/bin/rtylr-shell --restart-pos</command></action>
+    </keybind>
+  </keyboard>
+  <mouse>
+    <dragThreshold>8</dragThreshold>
+    <doubleClickTime>300</doubleClickTime>
+    <screenEdgeWarpTime>0</screenEdgeWarpTime>
+  </mouse>
+  <applications>
+    <application class="*" type="normal">
+      <decor>no</decor>
+      <maximized>yes</maximized>
+    </application>
+  </applications>
+</openbox_config>

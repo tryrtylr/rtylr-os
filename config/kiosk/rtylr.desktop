@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Rtylr OS
+Comment=Focused point-of-sale appliance session
+Exec=/usr/local/lib/rtylr/session.sh
+TryExec=/usr/local/lib/rtylr/session.sh
+Type=Application
+DesktopNames=Rtylr

@@ -1,0 +1,296 @@
+@define-color bg #090b11;
+@define-color surface #121620;
+@define-color surface_high #1a2030;
+@define-color text #f5f7fb;
+@define-color muted #9ca5b8;
+@define-color accent #7c5cff;
+@define-color accent_hover #9279ff;
+@define-color success #27d59b;
+@define-color warning #ffbd59;
+@define-color danger #ff5d75;
+@define-color border rgba(255, 255, 255, 0.10);
+
+window,
+.screen {
+  background: @bg;
+  color: @text;
+  font-family: "Ubuntu Sans", Ubuntu, sans-serif;
+  font-size: 16px;
+}
+
+.topbar {
+  min-height: 68px;
+  padding: 0 28px;
+  background: rgba(9, 11, 17, 0.96);
+  border-bottom: 1px solid @border;
+}
+
+.brand {
+  color: @text;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.topbar-divider {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 22px;
+}
+
+.topbar-title,
+.clock {
+  color: @muted;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.page-body {
+  padding: 34px 42px;
+}
+
+.center-body,
+.pin-body {
+  padding: 70px 36px 36px;
+}
+
+.setup-hero {
+  padding: 38px 24px 38px 12px;
+}
+
+.setup-card {
+  min-width: 430px;
+}
+
+.eyebrow {
+  color: @accent;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.hero-title {
+  color: @text;
+  font-size: 38px;
+  font-weight: 800;
+}
+
+.hero-copy {
+  color: @muted;
+  font-size: 18px;
+}
+
+.feature-line {
+  color: #d9ddeb;
+  font-size: 16px;
+}
+
+.card {
+  padding: 22px;
+  border-radius: 18px;
+  background: @surface;
+  border: 1px solid @border;
+}
+
+.card-title,
+.section-title {
+  color: @text;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.section-title {
+  margin-top: 8px;
+}
+
+.muted {
+  color: @muted;
+}
+
+.field-label,
+.health-title {
+  color: #d8dceb;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+entry {
+  min-height: 48px;
+  padding: 0 14px;
+  color: @text;
+  caret-color: @text;
+  background: #0d1119;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 12px;
+}
+
+entry:focus {
+  border-color: @accent;
+  box-shadow: 0 0 0 2px alpha(@accent, 0.22);
+}
+
+button {
+  min-height: 52px;
+  min-width: 116px;
+  padding: 0 18px;
+  border-radius: 13px;
+  border: 1px solid transparent;
+  font-size: 16px;
+  font-weight: 700;
+  box-shadow: none;
+}
+
+button.primary {
+  color: white;
+  background: @accent;
+}
+
+button.primary:hover,
+button.primary:focus {
+  background: @accent_hover;
+  box-shadow: 0 0 0 3px alpha(@accent, 0.24);
+}
+
+button.secondary,
+button.ghost,
+button.pin-action {
+  color: @text;
+  background: @surface_high;
+  border-color: @border;
+}
+
+button.secondary:hover,
+button.ghost:hover,
+button.pin-action:hover {
+  background: #242b3c;
+}
+
+button.ghost {
+  min-height: 42px;
+}
+
+button.danger {
+  color: white;
+  background: #b83b50;
+}
+
+button.danger:hover {
+  background: @danger;
+}
+
+.status-pill {
+  min-height: 30px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.status-ok {
+  color: @success;
+  border-color: alpha(@success, 0.45);
+  background: alpha(@success, 0.10);
+}
+
+.status-warning {
+  color: @warning;
+  border-color: alpha(@warning, 0.45);
+  background: alpha(@warning, 0.10);
+}
+
+.status-error {
+  color: @danger;
+  border-color: alpha(@danger, 0.45);
+  background: alpha(@danger, 0.10);
+}
+
+.status-neutral {
+  color: #bdc4d5;
+  border-color: @border;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.health-card {
+  min-width: 300px;
+  min-height: 116px;
+  border-left-width: 4px;
+}
+
+.health-summary {
+  color: @text;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.support-code {
+  color: @muted;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.error-label {
+  color: @danger;
+  font-weight: 600;
+}
+
+.success-label {
+  color: @success;
+  font-weight: 600;
+}
+
+.pin-dots {
+  color: @text;
+  font-size: 34px;
+}
+
+button.pin-button,
+button.pin-action {
+  min-width: 82px;
+  min-height: 66px;
+  font-size: 21px;
+}
+
+button.pin-button {
+  color: @text;
+  background: @surface_high;
+  border-color: @border;
+}
+
+button.hot-control {
+  min-width: 50px;
+  min-height: 50px;
+  padding: 0;
+  color: white;
+  background: @accent;
+  border: 2px solid rgba(255, 255, 255, 0.72);
+  border-radius: 25px;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 0 5px 18px rgba(0, 0, 0, 0.45);
+}
+
+notebook.recovery-tabs header {
+  padding: 12px 38px 0;
+  background: @bg;
+  border-bottom: 1px solid @border;
+}
+
+notebook.recovery-tabs tab {
+  min-height: 48px;
+  padding: 0 18px;
+  color: @muted;
+  border-bottom: 3px solid transparent;
+}
+
+notebook.recovery-tabs tab:checked {
+  color: @text;
+  border-bottom-color: @accent;
+}
+
+textview,
+textview text {
+  color: #c8cede;
+  background: #090c12;
+  font-size: 13px;
+}
+
+switch:checked {
+  background: @accent;
+}

@@ -12,6 +12,12 @@ dist/
 build/
 work/
 tmp/
+.subiquity/
+
+# Python
+__pycache__/
+*.py[cod]
+.coverage
 
 # Logs
 *.log

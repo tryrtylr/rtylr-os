@@ -1,0 +1,17 @@
+// Permit only the active, local appliance account to perform the small set of
+// recovery actions exposed by the Rtylr shell. Remote and inactive sessions do
+// not receive these permissions.
+polkit.addRule(function(action, subject) {
+    var allowed = [
+        "org.freedesktop.login1.reboot",
+        "org.freedesktop.login1.reboot-multiple-sessions",
+        "org.freedesktop.login1.power-off",
+        "org.freedesktop.login1.power-off-multiple-sessions",
+        "org.freedesktop.NetworkManager.enable-disable-network"
+    ];
+
+    if (subject.user === "rtylr" && subject.local && subject.active &&
+        allowed.indexOf(action.id) >= 0) {
+        return polkit.Result.YES;
+    }
+});

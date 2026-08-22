@@ -1,7 +1,7 @@
 [Unit]
 Description=Rtylr first-boot provisioning
-After=network-online.target
-Wants=network-online.target
+After=local-fs.target
+Before=lightdm.service
 ConditionPathExists=!/var/lib/rtylr/.firstboot-complete
 
 [Service]

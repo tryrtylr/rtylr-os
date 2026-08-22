@@ -15,6 +15,6 @@ if [[ -f "$TARGET" ]]; then
 fi
 
 printf 'Downloading %s\n' "$BASE_URL"
-curl --fail --location --progress-bar --output "$TARGET.part" "$BASE_URL"
+curl --fail --location --continue-at - --progress-bar --output "$TARGET.part" "$BASE_URL"
 mv "$TARGET.part" "$TARGET"
 printf 'Downloaded %s\n' "$TARGET"

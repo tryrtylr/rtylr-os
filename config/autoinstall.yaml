@@ -1,4 +1,4 @@
-# Rtylr OS initial appliance installer. No production secrets belong here.
+# Rtylr OS appliance installer. No production secrets belong here.
 autoinstall:
   version: 1
   locale: en_US.UTF-8
@@ -19,26 +19,48 @@ autoinstall:
     - network-manager
     - ca-certificates
     - curl
+    - openssh-client
+    - usbutils
+    - udev
     - cups
+    - cups-client
     - libusb-1.0-0
     - bluez
     - xorg
+    - x11-xserver-utils
     - openbox
     - lightdm
     - lightdm-gtk-greeter
     - xserver-xorg-input-libinput
+    - python3
+    - python3-gi
+    - python3-cairo
+    - gir1.2-gtk-3.0
+    - dbus-x11
+    - polkitd
     - rsync
     - jq
+    - logrotate
+    - vim-tiny
   late-commands:
-    - curtin in-target -- mkdir -p /opt/rtylr/config /var/lib/rtylr /var/log/rtylr /usr/local/lib/rtylr /etc/lightdm/lightdm.conf.d
-    - curtin in-target -- cp /cdrom/rtylr-config/packages.list /opt/rtylr/config/packages.list
-    - curtin in-target -- cp /cdrom/rtylr-config/kiosk/session.sh /usr/local/lib/rtylr/session.sh
-    - curtin in-target -- cp /cdrom/rtylr-config/systemd/*.service /etc/systemd/system/
-    - curtin in-target -- cp /cdrom/rtylr-config/kiosk/autologin.conf /etc/lightdm/lightdm.conf.d/50-rtylr-autologin.conf
-    - curtin in-target -- cp /cdrom/scripts/first-boot.sh /usr/local/lib/rtylr/first-boot.sh
-    - curtin in-target -- chmod 0755 /usr/local/lib/rtylr/*.sh
+    - install -d -m 0755 /target/opt/rtylr/config /target/opt/rtylr/shell /target/opt/rtylr/pos /target/opt/rtylr/agent /target/usr/local/lib/rtylr /target/etc/lightdm/lightdm.conf.d /target/etc/polkit-1/rules.d /target/etc/logrotate.d /target/etc/xdg/openbox /target/usr/share/xsessions
+    - install -d -m 0750 /target/var/lib/rtylr /target/var/log/rtylr
+    - cp -a /cdrom/rtylr-shell/. /target/opt/rtylr/shell/
+    - install -m 0755 /cdrom/rtylr-shell/rtylr-shell /target/usr/local/bin/rtylr-shell
+    - install -m 0644 /cdrom/rtylr-config/shell.json /target/opt/rtylr/config/shell.json
+    - install -m 0644 /cdrom/rtylr-config/packages.list /target/opt/rtylr/config/packages.list
+    - install -m 0755 /cdrom/rtylr-config/kiosk/session.sh /target/usr/local/lib/rtylr/session.sh
+    - install -m 0644 /cdrom/rtylr-config/kiosk/rtylr.desktop /target/usr/share/xsessions/rtylr.desktop
+    - install -m 0644 /cdrom/rtylr-config/kiosk/openbox.xml /target/etc/xdg/openbox/rc.xml
+    - install -m 0644 /cdrom/rtylr-config/kiosk/autologin.conf /target/etc/lightdm/lightdm.conf.d/50-rtylr-autologin.conf
+    - install -m 0644 /cdrom/rtylr-config/polkit/49-rtylr-appliance.rules /target/etc/polkit-1/rules.d/49-rtylr-appliance.rules
+    - install -m 0644 /cdrom/rtylr-config/logrotate/rtylr /target/etc/logrotate.d/rtylr
+    - cp /cdrom/rtylr-config/systemd/*.service /target/etc/systemd/system/
+    - install -m 0755 /cdrom/scripts/first-boot.sh /target/usr/local/lib/rtylr/first-boot.sh
+    - curtin in-target -- install -d -m 0755 -o rtylr -g rtylr /home/rtylr/.config/openbox
+    - curtin in-target -- cp /etc/xdg/openbox/rc.xml /home/rtylr/.config/openbox/rc.xml
+    - curtin in-target -- chown -R rtylr:rtylr /home/rtylr/.config /var/lib/rtylr /var/log/rtylr
     - curtin in-target -- systemctl enable rtylr-firstboot.service
     - curtin in-target -- systemctl enable rtylr-agent.service
-    - curtin in-target -- systemctl enable rtylr-pos.service
     - curtin in-target -- systemctl enable NetworkManager
     - curtin in-target -- systemctl enable lightdm
