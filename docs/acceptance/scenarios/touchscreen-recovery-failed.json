@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "touchscreen-recovery-failed",
+  "domain": "touchscreen",
+  "condition": "recovery-failed",
+  "title": "Touch input did not recover",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Touch input remains failed after one bounded recovery attempt."
+  ],
+  "operator_steps": [
+    "Leave the recovery view open and stop retrying.",
+    "Escalate with the support code and last successful action."
+  ],
+  "admin_steps": [
+    "Collect diagnostics and use the documented support path."
+  ],
+  "success_criteria": [
+    "Touch input recovers once and remains healthy after refresh."
+  ],
+  "tags": [
+    "continuity",
+    "touchscreen",
+    "recovery-failed",
+    "critical"
+  ]
+}
