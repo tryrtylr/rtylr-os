@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "agent-dependency-failed",
+  "domain": "agent",
+  "condition": "dependency-failed",
+  "title": "Management agent has a failed dependency",
+  "severity": "error",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Management agent reports an upstream dependency failure."
+  ],
+  "operator_steps": [
+    "Review adjacent health cards for the upstream failure.",
+    "Keep the current error visible for support."
+  ],
+  "admin_steps": [
+    "Recover the named dependency before restarting this capability."
+  ],
+  "success_criteria": [
+    "Management agent and its dependency both report healthy."
+  ],
+  "tags": [
+    "continuity",
+    "agent",
+    "dependency-failed",
+    "error"
+  ]
+}

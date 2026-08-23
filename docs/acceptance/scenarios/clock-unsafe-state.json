@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "clock-unsafe-state",
+  "domain": "clock",
+  "condition": "unsafe-state",
+  "title": "System time is in an unsafe state",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "System time cannot confirm whether the last operation completed safely."
+  ],
+  "operator_steps": [
+    "Stop using the affected capability immediately.",
+    "Do not repeat or reverse the unknown operation."
+  ],
+  "admin_steps": [
+    "Isolate the capability and escalate before restoring service."
+  ],
+  "success_criteria": [
+    "System time has a verified state and passes a non-destructive check."
+  ],
+  "tags": [
+    "continuity",
+    "clock",
+    "unsafe-state",
+    "critical"
+  ]
+}

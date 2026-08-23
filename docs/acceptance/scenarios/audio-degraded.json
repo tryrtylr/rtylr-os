@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "audio-degraded",
+  "domain": "audio",
+  "condition": "degraded",
+  "title": "Audio output is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Audio output reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Audio output returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "audio",
+    "degraded",
+    "warning"
+  ]
+}

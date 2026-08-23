@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "bluetooth-healthy-baseline",
+  "domain": "bluetooth",
+  "condition": "healthy-baseline",
+  "title": "Bluetooth peripherals meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Bluetooth peripherals reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Bluetooth peripherals remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "bluetooth",
+    "healthy-baseline",
+    "info"
+  ]
+}

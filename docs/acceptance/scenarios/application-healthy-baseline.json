@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "application-healthy-baseline",
+  "domain": "application",
+  "condition": "healthy-baseline",
+  "title": "Primary business app meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Primary business app reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Primary business app remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "application",
+    "healthy-baseline",
+    "info"
+  ]
+}

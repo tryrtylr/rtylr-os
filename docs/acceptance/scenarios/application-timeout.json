@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "application-timeout",
+  "domain": "application",
+  "condition": "timeout",
+  "title": "Primary business app times out",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Primary business app does not complete within the expected interval."
+  ],
+  "operator_steps": [
+    "Wait for a definitive result before attempting another action.",
+    "Open status and confirm whether the dependency is still active."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Primary business app completes within the expected interval twice."
+  ],
+  "tags": [
+    "continuity",
+    "application",
+    "timeout",
+    "warning"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "agent-misconfigured",
+  "domain": "agent",
+  "condition": "misconfigured",
+  "title": "Management agent is misconfigured",
+  "severity": "error",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Management agent reports configuration that cannot be applied."
+  ],
+  "operator_steps": [
+    "Capture the visible error and support code.",
+    "Avoid changing unrelated settings."
+  ],
+  "admin_steps": [
+    "Correct only the validated setting, then save once."
+  ],
+  "success_criteria": [
+    "Management agent accepts configuration and returns to healthy."
+  ],
+  "tags": [
+    "continuity",
+    "agent",
+    "misconfigured",
+    "error"
+  ]
+}

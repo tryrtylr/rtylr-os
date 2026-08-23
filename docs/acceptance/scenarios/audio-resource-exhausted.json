@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "audio-resource-exhausted",
+  "domain": "audio",
+  "condition": "resource-exhausted",
+  "title": "Audio output has exhausted a resource",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Audio output reports insufficient local capacity."
+  ],
+  "operator_steps": [
+    "Stop starting new work on the affected capability.",
+    "Preserve the current status and support code."
+  ],
+  "admin_steps": [
+    "Free or restore the identified resource without deleting business data."
+  ],
+  "success_criteria": [
+    "Audio output reports safe capacity above the warning threshold."
+  ],
+  "tags": [
+    "continuity",
+    "audio",
+    "resource-exhausted",
+    "critical"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "audio-recovery-failed",
+  "domain": "audio",
+  "condition": "recovery-failed",
+  "title": "Audio output did not recover",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Audio output remains failed after one bounded recovery attempt."
+  ],
+  "operator_steps": [
+    "Leave the recovery view open and stop retrying.",
+    "Escalate with the support code and last successful action."
+  ],
+  "admin_steps": [
+    "Collect diagnostics and use the documented support path."
+  ],
+  "success_criteria": [
+    "Audio output recovers once and remains healthy after refresh."
+  ],
+  "tags": [
+    "continuity",
+    "audio",
+    "recovery-failed",
+    "critical"
+  ]
+}

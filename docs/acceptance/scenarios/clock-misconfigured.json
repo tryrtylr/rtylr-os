@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "clock-misconfigured",
+  "domain": "clock",
+  "condition": "misconfigured",
+  "title": "System time is misconfigured",
+  "severity": "error",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "System time reports configuration that cannot be applied."
+  ],
+  "operator_steps": [
+    "Capture the visible error and support code.",
+    "Avoid changing unrelated settings."
+  ],
+  "admin_steps": [
+    "Correct only the validated setting, then save once."
+  ],
+  "success_criteria": [
+    "System time accepts configuration and returns to healthy."
+  ],
+  "tags": [
+    "continuity",
+    "clock",
+    "misconfigured",
+    "error"
+  ]
+}
