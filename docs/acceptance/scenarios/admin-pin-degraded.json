@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "admin-pin-degraded",
+  "domain": "admin-pin",
+  "condition": "degraded",
+  "title": "Admin access is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Admin access reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Admin access returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "admin-pin",
+    "degraded",
+    "warning"
+  ]
+}
