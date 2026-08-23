@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "gateway-resource-exhausted",
+  "domain": "gateway",
+  "condition": "resource-exhausted",
+  "title": "Default gateway has exhausted a resource",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Default gateway reports insufficient local capacity."
+  ],
+  "operator_steps": [
+    "Stop starting new work on the affected capability.",
+    "Preserve the current status and support code."
+  ],
+  "admin_steps": [
+    "Free or restore the identified resource without deleting business data."
+  ],
+  "success_criteria": [
+    "Default gateway reports safe capacity above the warning threshold."
+  ],
+  "tags": [
+    "continuity",
+    "gateway",
+    "resource-exhausted",
+    "critical"
+  ]
+}
