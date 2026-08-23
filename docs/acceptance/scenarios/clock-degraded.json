@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "clock-degraded",
+  "domain": "clock",
+  "condition": "degraded",
+  "title": "System time is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "System time reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "System time returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "clock",
+    "degraded",
+    "warning"
+  ]
+}
