@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from rtylr_shell.scenarios import ScenarioError, load_catalog, parse_scenario
+from rtylr_shell.scenarios import ScenarioError, load_catalog, load_scenario, parse_scenario
 
 
 def valid_payload(**overrides):
@@ -51,6 +51,21 @@ class ScenarioTests(unittest.TestCase):
             valid_payload(requires_admin=False, admin_steps=[], severity="info")
         )
         self.assertEqual(scenario.admin_steps, ())
+
+    def test_rejects_unknown_fields(self):
+        with self.assertRaisesRegex(ScenarioError, "unknown fields"):
+            parse_scenario(valid_payload(guess="not allowed"))
+
+    def test_rejects_non_slug_tags(self):
+        with self.assertRaisesRegex(ScenarioError, "lowercase slugs"):
+            parse_scenario(valid_payload(tags=["continuity", "Needs Review"]))
+
+    def test_file_name_must_match_identifier(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "different-name.json"
+            path.write_text(json.dumps(valid_payload()), encoding="utf-8")
+            with self.assertRaisesRegex(ScenarioError, "file name"):
+                load_scenario(path)
 
     def test_catalog_rejects_duplicate_ids(self):
         with tempfile.TemporaryDirectory() as temporary:
