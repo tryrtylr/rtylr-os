@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "wifi-resource-exhausted",
+  "domain": "wifi",
+  "condition": "resource-exhausted",
+  "title": "Wi-Fi has exhausted a resource",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Wi-Fi reports insufficient local capacity."
+  ],
+  "operator_steps": [
+    "Stop starting new work on the affected capability.",
+    "Preserve the current status and support code."
+  ],
+  "admin_steps": [
+    "Free or restore the identified resource without deleting business data."
+  ],
+  "success_criteria": [
+    "Wi-Fi reports safe capacity above the warning threshold."
+  ],
+  "tags": [
+    "continuity",
+    "wifi",
+    "resource-exhausted",
+    "critical"
+  ]
+}
