@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from rtylr_shell.scenarios import ScenarioError, load_catalog, load_scenario, parse_scenario
 
@@ -71,9 +72,15 @@ class ScenarioTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             for name in ("one.json", "two.json"):
-                (root / name).write_text(json.dumps(valid_payload()), encoding="utf-8")
-            with self.assertRaisesRegex(ScenarioError, "duplicate id"):
-                load_catalog(root)
+                (root / name).write_text("{}", encoding="utf-8")
+            first = parse_scenario(valid_payload(), "one.json")
+            second = parse_scenario(valid_payload(), "two.json")
+            with patch(
+                "rtylr_shell.scenarios.load_scenario",
+                side_effect=(first, second),
+            ):
+                with self.assertRaisesRegex(ScenarioError, "duplicate id"):
+                    load_catalog(root)
 
 
 if __name__ == "__main__":

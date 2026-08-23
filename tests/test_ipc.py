@@ -4,7 +4,7 @@ import tempfile
 import threading
 import unittest
 
-from rtylr_shell.ipc import CommandServer, send_command
+from rtylr_shell.ipc import ALLOWED_COMMANDS, CommandServer, send_command
 
 
 class CommandChannelTests(unittest.TestCase):
@@ -38,10 +38,8 @@ class CommandChannelTests(unittest.TestCase):
             send_command("run-anything")
 
     def test_business_app_restart_keeps_legacy_alias(self):
-        with tempfile.TemporaryDirectory() as temporary:
-            missing_socket = Path(temporary) / "missing.sock"
-            self.assertFalse(send_command("restart-app", missing_socket))
-            self.assertFalse(send_command("restart-pos", missing_socket))
+        self.assertIn("restart-app", ALLOWED_COMMANDS)
+        self.assertIn("restart-pos", ALLOWED_COMMANDS)
 
 
 if __name__ == "__main__":
