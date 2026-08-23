@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "gateway-degraded",
+  "domain": "gateway",
+  "condition": "degraded",
+  "title": "Default gateway is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Default gateway reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Default gateway returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "gateway",
+    "degraded",
+    "warning"
+  ]
+}
