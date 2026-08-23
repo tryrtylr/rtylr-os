@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "mouse-unavailable",
+  "domain": "mouse",
+  "condition": "unavailable",
+  "title": "Pointer input is unavailable",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Pointer input reports unavailable."
+  ],
+  "operator_steps": [
+    "Open Recovery & settings and confirm the affected status.",
+    "Pause new work that depends on this capability."
+  ],
+  "admin_steps": [
+    "Use the protected recovery control for this capability once."
+  ],
+  "success_criteria": [
+    "Pointer input reports available and a read-only check succeeds."
+  ],
+  "tags": [
+    "continuity",
+    "mouse",
+    "unavailable",
+    "critical"
+  ]
+}
