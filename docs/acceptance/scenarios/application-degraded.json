@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "application-degraded",
+  "domain": "application",
+  "condition": "degraded",
+  "title": "Primary business app is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Primary business app reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Primary business app returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "application",
+    "degraded",
+    "warning"
+  ]
+}
