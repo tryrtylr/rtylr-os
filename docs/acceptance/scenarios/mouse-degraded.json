@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "mouse-degraded",
+  "domain": "mouse",
+  "condition": "degraded",
+  "title": "Pointer input is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Pointer input reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Pointer input returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "mouse",
+    "degraded",
+    "warning"
+  ]
+}
