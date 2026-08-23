@@ -13,6 +13,24 @@ SCHEMA_VERSION = 1
 VALID_SEVERITIES = frozenset({"info", "warning", "error", "critical"})
 VALID_STATUSES = frozenset({"ok", "warning", "error", "neutral"})
 SLUG = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+SCENARIO_FIELDS = frozenset(
+    {
+        "schema_version",
+        "id",
+        "domain",
+        "condition",
+        "title",
+        "severity",
+        "expected_status",
+        "requires_admin",
+        "offline_safe",
+        "signals",
+        "operator_steps",
+        "admin_steps",
+        "success_criteria",
+        "tags",
+    }
+)
 
 
 class ScenarioError(ValueError):
@@ -69,6 +87,13 @@ def _text_list(
 def parse_scenario(payload: Mapping[str, Any], source: str = "<memory>") -> AcceptanceScenario:
     if not isinstance(payload, Mapping):
         raise ScenarioError(f"{source}: scenario must be an object")
+    fields = set(payload)
+    missing = sorted(SCENARIO_FIELDS - fields)
+    unknown = sorted(fields - SCENARIO_FIELDS)
+    if missing:
+        raise ScenarioError(f"{source}: missing fields: {', '.join(missing)}")
+    if unknown:
+        raise ScenarioError(f"{source}: unknown fields: {', '.join(unknown)}")
     if payload.get("schema_version") != SCHEMA_VERSION:
         raise ScenarioError(f"{source}: schema_version must be {SCHEMA_VERSION}")
 
@@ -99,6 +124,11 @@ def parse_scenario(payload: Mapping[str, Any], source: str = "<memory>") -> Acce
     if requires_admin and not admin_steps:
         raise ScenarioError(f"{source}: protected scenarios require admin_steps")
 
+    tags = _text_list(payload.get("tags"), "tags", source)
+    for tag in tags:
+        if not SLUG.fullmatch(tag):
+            raise ScenarioError(f"{source}: tags must contain lowercase slugs")
+
     return AcceptanceScenario(
         scenario_id=scenario_id,
         domain=domain,
@@ -114,7 +144,7 @@ def parse_scenario(payload: Mapping[str, Any], source: str = "<memory>") -> Acce
         success_criteria=_text_list(
             payload.get("success_criteria"), "success_criteria", source
         ),
-        tags=_text_list(payload.get("tags"), "tags", source),
+        tags=tags,
         source=source,
     )
 
@@ -124,7 +154,10 @@ def load_scenario(path: Path) -> AcceptanceScenario:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise ScenarioError(f"{path}: could not read scenario: {exc}") from exc
-    return parse_scenario(payload, str(path))
+    scenario = parse_scenario(payload, str(path))
+    if path.stem != scenario.scenario_id:
+        raise ScenarioError(f"{path}: file name must match scenario id")
+    return scenario
 
 
 def load_catalog(directory: Path) -> list[AcceptanceScenario]:
