@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "admin-pin-timeout",
+  "domain": "admin-pin",
+  "condition": "timeout",
+  "title": "Admin access times out",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Admin access does not complete within the expected interval."
+  ],
+  "operator_steps": [
+    "Wait for a definitive result before attempting another action.",
+    "Open status and confirm whether the dependency is still active."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Admin access completes within the expected interval twice."
+  ],
+  "tags": [
+    "continuity",
+    "admin-pin",
+    "timeout",
+    "warning"
+  ]
+}
