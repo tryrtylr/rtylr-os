@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "storage-intermittent",
+  "domain": "storage",
+  "condition": "intermittent",
+  "title": "Local storage is intermittent",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Local storage changes repeatedly between healthy and unavailable."
+  ],
+  "operator_steps": [
+    "Record the time and support code when the state changes.",
+    "Do not repeat a write when the prior result is unknown."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Local storage remains healthy through three consecutive checks."
+  ],
+  "tags": [
+    "continuity",
+    "storage",
+    "intermittent",
+    "warning"
+  ]
+}
