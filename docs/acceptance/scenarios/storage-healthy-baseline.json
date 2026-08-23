@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "storage-healthy-baseline",
+  "domain": "storage",
+  "condition": "healthy-baseline",
+  "title": "Local storage meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Local storage reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Local storage remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "storage",
+    "healthy-baseline",
+    "info"
+  ]
+}
