@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "clock-healthy-baseline",
+  "domain": "clock",
+  "condition": "healthy-baseline",
+  "title": "System time meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "System time reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "System time remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "clock",
+    "healthy-baseline",
+    "info"
+  ]
+}
