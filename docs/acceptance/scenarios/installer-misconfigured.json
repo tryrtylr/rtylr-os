@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "installer-misconfigured",
+  "domain": "installer",
+  "condition": "misconfigured",
+  "title": "Installer is misconfigured",
+  "severity": "error",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Installer reports configuration that cannot be applied."
+  ],
+  "operator_steps": [
+    "Capture the visible error and support code.",
+    "Avoid changing unrelated settings."
+  ],
+  "admin_steps": [
+    "Correct only the validated setting, then save once."
+  ],
+  "success_criteria": [
+    "Installer accepts configuration and returns to healthy."
+  ],
+  "tags": [
+    "continuity",
+    "installer",
+    "misconfigured",
+    "error"
+  ]
+}

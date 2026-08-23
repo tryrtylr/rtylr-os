@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "gateway-unavailable",
+  "domain": "gateway",
+  "condition": "unavailable",
+  "title": "Default gateway is unavailable",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Default gateway reports unavailable."
+  ],
+  "operator_steps": [
+    "Open Recovery & settings and confirm the affected status.",
+    "Pause new work that depends on this capability."
+  ],
+  "admin_steps": [
+    "Use the protected recovery control for this capability once."
+  ],
+  "success_criteria": [
+    "Default gateway reports available and a read-only check succeeds."
+  ],
+  "tags": [
+    "continuity",
+    "gateway",
+    "unavailable",
+    "critical"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "filesystem-degraded",
+  "domain": "filesystem",
+  "condition": "degraded",
+  "title": "System filesystem is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "System filesystem reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "System filesystem returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "filesystem",
+    "degraded",
+    "warning"
+  ]
+}

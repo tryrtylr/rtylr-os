@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "dns-misconfigured",
+  "domain": "dns",
+  "condition": "misconfigured",
+  "title": "Name resolution is misconfigured",
+  "severity": "error",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Name resolution reports configuration that cannot be applied."
+  ],
+  "operator_steps": [
+    "Capture the visible error and support code.",
+    "Avoid changing unrelated settings."
+  ],
+  "admin_steps": [
+    "Correct only the validated setting, then save once."
+  ],
+  "success_criteria": [
+    "Name resolution accepts configuration and returns to healthy."
+  ],
+  "tags": [
+    "continuity",
+    "dns",
+    "misconfigured",
+    "error"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "ethernet-intermittent",
+  "domain": "ethernet",
+  "condition": "intermittent",
+  "title": "Wired network is intermittent",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Wired network changes repeatedly between healthy and unavailable."
+  ],
+  "operator_steps": [
+    "Record the time and support code when the state changes.",
+    "Do not repeat a write when the prior result is unknown."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Wired network remains healthy through three consecutive checks."
+  ],
+  "tags": [
+    "continuity",
+    "ethernet",
+    "intermittent",
+    "warning"
+  ]
+}
