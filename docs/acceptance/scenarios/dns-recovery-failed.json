@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "dns-recovery-failed",
+  "domain": "dns",
+  "condition": "recovery-failed",
+  "title": "Name resolution did not recover",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Name resolution remains failed after one bounded recovery attempt."
+  ],
+  "operator_steps": [
+    "Leave the recovery view open and stop retrying.",
+    "Escalate with the support code and last successful action."
+  ],
+  "admin_steps": [
+    "Collect diagnostics and use the documented support path."
+  ],
+  "success_criteria": [
+    "Name resolution recovers once and remains healthy after refresh."
+  ],
+  "tags": [
+    "continuity",
+    "dns",
+    "recovery-failed",
+    "critical"
+  ]
+}
