@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "ethernet-degraded",
+  "domain": "ethernet",
+  "condition": "degraded",
+  "title": "Wired network is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Wired network reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Wired network returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "ethernet",
+    "degraded",
+    "warning"
+  ]
+}
