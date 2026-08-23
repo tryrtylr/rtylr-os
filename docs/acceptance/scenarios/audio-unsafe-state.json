@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "audio-unsafe-state",
+  "domain": "audio",
+  "condition": "unsafe-state",
+  "title": "Audio output is in an unsafe state",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Audio output cannot confirm whether the last operation completed safely."
+  ],
+  "operator_steps": [
+    "Stop using the affected capability immediately.",
+    "Do not repeat or reverse the unknown operation."
+  ],
+  "admin_steps": [
+    "Isolate the capability and escalate before restoring service."
+  ],
+  "success_criteria": [
+    "Audio output has a verified state and passes a non-destructive check."
+  ],
+  "tags": [
+    "continuity",
+    "audio",
+    "unsafe-state",
+    "critical"
+  ]
+}
