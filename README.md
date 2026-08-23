@@ -50,6 +50,23 @@ make test
 
 These checks require Python 3 and Bash but do not require a graphical display.
 
+## Reliability acceptance
+
+Rtylr's business-continuity contract is maintained as 280 machine-validated
+scenarios across 28 device domains and 10 failure or healthy conditions.
+
+- [Catalog overview](docs/acceptance/README.md)
+- [Generated scenario index](docs/acceptance/index.md)
+- [Authoring guide](docs/acceptance/authoring.md)
+- [Operator response taxonomy](docs/acceptance/operator-actions.md)
+
+Validate the catalog and its coverage matrix directly with:
+
+```bash
+./scripts/check-scenarios.py
+./scripts/check-scenario-coverage.py
+```
+
 ## ISO build
 
 On Ubuntu 24.04 or newer:
