@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "bluetooth-degraded",
+  "domain": "bluetooth",
+  "condition": "degraded",
+  "title": "Bluetooth peripherals is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Bluetooth peripherals reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Bluetooth peripherals returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "bluetooth",
+    "degraded",
+    "warning"
+  ]
+}
