@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "dns-unsafe-state",
+  "domain": "dns",
+  "condition": "unsafe-state",
+  "title": "Name resolution is in an unsafe state",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Name resolution cannot confirm whether the last operation completed safely."
+  ],
+  "operator_steps": [
+    "Stop using the affected capability immediately.",
+    "Do not repeat or reverse the unknown operation."
+  ],
+  "admin_steps": [
+    "Isolate the capability and escalate before restoring service."
+  ],
+  "success_criteria": [
+    "Name resolution has a verified state and passes a non-destructive check."
+  ],
+  "tags": [
+    "continuity",
+    "dns",
+    "unsafe-state",
+    "critical"
+  ]
+}
