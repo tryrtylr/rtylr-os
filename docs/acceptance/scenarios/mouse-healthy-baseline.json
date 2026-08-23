@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "mouse-healthy-baseline",
+  "domain": "mouse",
+  "condition": "healthy-baseline",
+  "title": "Pointer input meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Pointer input reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Pointer input remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "mouse",
+    "healthy-baseline",
+    "info"
+  ]
+}
