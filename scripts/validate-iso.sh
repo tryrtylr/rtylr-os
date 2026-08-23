@@ -2,7 +2,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-ISO="$(realpath "${1:-${ROOT_DIR}/dist/rtylr-os-0.2.0-amd64.iso}")"
+VERSION="$(tr -d '[:space:]' < "${ROOT_DIR}/VERSION")"
+ISO="$(realpath "${1:-${ROOT_DIR}/dist/rtylr-os-${VERSION}-amd64.iso}")"
 
 [[ -f "$ISO" ]] || { printf 'ISO not found: %s\n' "$ISO" >&2; exit 1; }
 for command_name in xorriso bsdtar sha256sum python3; do
@@ -31,6 +32,7 @@ for required in \
   boot/grub/grub.cfg \
   nocloud/user-data \
   nocloud/meta-data \
+  rtylr-version \
   rtylr-shell/rtylr-shell \
   rtylr-shell/rtylr_shell/app.py \
   rtylr-config/kiosk/rtylr.desktop \
@@ -46,9 +48,11 @@ trap 'rm -rf -- "$TEMP_DIR"' EXIT
 xorriso -osirrox on -indev "$ISO" \
   -extract /boot/grub/grub.cfg "$TEMP_DIR/grub.cfg" \
   -extract /nocloud/user-data "$TEMP_DIR/user-data" \
+  -extract /rtylr-version "$TEMP_DIR/rtylr-version" \
   >/dev/null 2>&1
 
 grep -Fq 'autoinstall ds=nocloud\;s=/cdrom/nocloud/' "$TEMP_DIR/grub.cfg"
+[[ "$(tr -d '[:space:]' < "$TEMP_DIR/rtylr-version")" == "$VERSION" ]]
 if grep -q '__RTYLR_INSTALL_PASSWORD_HASH__' "$TEMP_DIR/user-data"; then
   printf 'Installer password placeholder remains in ISO.\n' >&2
   exit 1
@@ -65,7 +69,8 @@ except ImportError:
 document = yaml.safe_load(Path(sys.argv[1]).read_text(encoding="utf-8"))
 assert document["autoinstall"]["version"] == 1
 password = document["autoinstall"]["identity"]["password"]
-assert isinstance(password, str) and password.startswith(("$5$", "$6$", "$y$"))
+assert isinstance(password, str)
+assert password == "!" or password.startswith(("$5$", "$6$", "$y$"))
 PY
 
 boot_report="$(xorriso -indev "$ISO" -report_el_torito plain 2>&1)"

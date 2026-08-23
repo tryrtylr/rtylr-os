@@ -1,6 +1,7 @@
 SHELL := /bin/bash
+VERSION := $(strip $(shell cat VERSION))
 
-.PHONY: check check-build test download verify iso validate-iso clean
+.PHONY: check check-build test download verify iso validate-iso package-release print-version clean
 
 check:
 	./scripts/check-source.sh
@@ -22,6 +23,12 @@ iso: check check-build download verify
 
 validate-iso:
 	./scripts/validate-iso.sh
+
+package-release: validate-iso
+	./scripts/package-release.sh
+
+print-version:
+	@printf '%s\n' '$(VERSION)'
 
 clean:
 	rm -rf build work tmp dist

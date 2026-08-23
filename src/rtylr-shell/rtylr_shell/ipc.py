@@ -9,7 +9,13 @@ import threading
 from typing import Callable
 
 
-ALLOWED_COMMANDS = {"show-recovery", "restart-pos", "show-shell", "quit"}
+ALLOWED_COMMANDS = {
+    "show-recovery",
+    "restart-app",
+    "restart-pos",  # 0.2 compatibility alias
+    "show-shell",
+    "quit",
+}
 
 
 def socket_path() -> Path:

@@ -3,7 +3,7 @@ import subprocess
 import tempfile
 import unittest
 
-from rtylr_shell.supervisor import PosSupervisor
+from rtylr_shell.supervisor import AppSupervisor
 
 
 class FakeProcess:
@@ -47,18 +47,18 @@ class SupervisorTests(unittest.TestCase):
         self.clock_value = 100.0
         self.popen = FakePopen()
         self.config = {
-            "name": "Store POS",
-            "command": ["/opt/store/pos", "--kiosk"],
-            "working_directory": "/opt/store",
+            "name": "Business workspace",
+            "command": ["/opt/company/app", "--kiosk"],
+            "working_directory": "/opt/company",
             "restart": {
                 "max_attempts": 3,
                 "window_seconds": 60,
                 "backoff_seconds": [1, 2],
             },
         }
-        self.supervisor = PosSupervisor(
+        self.supervisor = AppSupervisor(
             self.config,
-            Path(self.temporary.name) / "pos.log",
+            Path(self.temporary.name) / "application.log",
             clock=lambda: self.clock_value,
             popen_factory=self.popen,
             executable_check=lambda _path: True,
@@ -71,7 +71,7 @@ class SupervisorTests(unittest.TestCase):
     def test_command_is_passed_as_array_without_shell(self):
         self.assertTrue(self.supervisor.start())
         command, options = self.popen.calls[0]
-        self.assertEqual(command, ["/opt/store/pos", "--kiosk"])
+        self.assertEqual(command, ["/opt/company/app", "--kiosk"])
         self.assertNotIn("shell", options)
         self.assertEqual(self.supervisor.snapshot().status, "running")
 
@@ -98,27 +98,27 @@ class SupervisorTests(unittest.TestCase):
         self.assertIn("repeatedly", snapshot.message)
 
     def test_missing_executable_is_actionable(self):
-        supervisor = PosSupervisor(
+        supervisor = AppSupervisor(
             self.config,
             Path(self.temporary.name) / "missing.log",
             executable_check=lambda _path: False,
         )
         self.assertFalse(supervisor.start())
         self.assertEqual(supervisor.snapshot().status, "missing")
-        self.assertIn("/opt/store/pos", supervisor.snapshot().message)
+        self.assertIn("/opt/company/app", supervisor.snapshot().message)
 
     def test_log_path_error_is_actionable(self):
         blocker = Path(self.temporary.name) / "not-a-directory"
         blocker.write_text("blocked", encoding="utf-8")
-        supervisor = PosSupervisor(
+        supervisor = AppSupervisor(
             self.config,
-            blocker / "pos.log",
+            blocker / "application.log",
             popen_factory=self.popen,
             executable_check=lambda _path: True,
         )
         self.assertFalse(supervisor.start())
         self.assertEqual(supervisor.snapshot().status, "failed")
-        self.assertIn("Could not start POS", supervisor.snapshot().message)
+        self.assertIn("Could not start business app", supervisor.snapshot().message)
         self.assertEqual(self.popen.calls, [])
 
 

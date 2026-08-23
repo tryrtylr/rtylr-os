@@ -1,4 +1,4 @@
-"""GTK appliance shell for launching and recovering a configured POS."""
+"""GTK shell for launching and recovering a primary business application."""
 
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ from .config import ConfigError, ConfigStore, DEFAULT_CONFIG, Paths, StateStore
 from .diagnostics import HealthItem, collect_health
 from .ipc import CommandServer, send_command
 from .security import hash_pin, valid_pin, verify_pin
-from .supervisor import PosSupervisor, SupervisorSnapshot
+from .supervisor import AppSupervisor, SupervisorSnapshot
 
 try:
     import gi
@@ -86,7 +86,7 @@ class RtylrShell:
             self.config_error = f"{self.config_error}\n{exc}".strip()
 
         self._configure_logging()
-        self.supervisor = PosSupervisor(self.config["pos"], self.paths.pos_log)
+        self.supervisor = AppSupervisor(self.config["application"], self.paths.application_log)
         self.support_code = actions.support_code(self.paths.device_id)
         self.initial_command = initial_command
         self.active_view = ""
@@ -96,7 +96,7 @@ class RtylrShell:
         self.health_refreshing = False
         self.last_health_refresh = 0.0
         self.last_status = self.supervisor.status
-        self.pos_mode_requested = False
+        self.app_mode_requested = False
         self.pending_admin_action: str | None = None
 
         self._load_style()
@@ -133,7 +133,7 @@ class RtylrShell:
             return
         LOGGER.setLevel(logging.INFO)
         try:
-            shell_log = self.paths.pos_log.with_name("shell.log")
+            shell_log = self.paths.application_log.with_name("shell.log")
             shell_log.parent.mkdir(parents=True, exist_ok=True)
             handler: logging.Handler = RotatingFileHandler(
                 shell_log, maxBytes=1_000_000, backupCount=2, encoding="utf-8"
@@ -196,16 +196,18 @@ class RtylrShell:
 
         hero = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=18)
         _add_class(hero, "setup-hero")
-        hero.pack_start(_label("POS infrastructure, without the desktop.", "eyebrow"), False, False, 0)
         hero.pack_start(
-            _label("Set up this terminal once. Then get out of the cashier's way.", "hero-title"),
+            _label("THE OPERATING SYSTEM FOR YOUR BUSINESS", "eyebrow"), False, False, 0
+        )
+        hero.pack_start(
+            _label("Set up the workspace your team runs on.", "hero-title"),
             False,
             False,
             0,
         )
         hero.pack_start(
             _label(
-                "Rtylr launches your POS automatically, watches it for failures, and gives staff a fast recovery path when hardware or connectivity goes wrong.",
+                "Rtylr opens your primary business app, keeps the device healthy, and gives your team a fast recovery path when software, hardware, or connectivity goes wrong.",
                 "hero-copy",
             ),
             False,
@@ -220,25 +222,25 @@ class RtylrShell:
         ):
             feature_box.pack_start(_label(f"●  {text}", "feature-line"), False, False, 0)
         hero.pack_start(feature_box, False, False, 12)
-        self.setup_health = _label("Checking terminal readiness…", "muted")
+        self.setup_health = _label("Checking device readiness…", "muted")
         hero.pack_end(self.setup_health, False, False, 0)
         body.pack_start(hero, True, True, 0)
 
         form = self._card(14)
         _add_class(form, "setup-card")
-        form.pack_start(_label("Configure the POS", "card-title"), False, False, 0)
+        form.pack_start(_label("Choose your primary business app", "card-title"), False, False, 0)
         form.pack_start(
             _label("The executable can be installed now or provisioned later.", "muted"),
             False,
             False,
             0,
         )
-        name_box, self.setup_name_entry = self._field("Display name", "Store POS")
+        name_box, self.setup_name_entry = self._field("Display name", "Business workspace")
         command_box, self.setup_command_entry = self._field(
-            "Command", "/opt/store-pos/store-pos --kiosk"
+            "Command", "/opt/my-business/app --kiosk"
         )
-        self.setup_name_entry.set_text(self.config["pos"]["name"])
-        self.setup_command_entry.set_text(shlex.join(self.config["pos"]["command"]))
+        self.setup_name_entry.set_text(self.config["application"]["name"])
+        self.setup_command_entry.set_text(shlex.join(self.config["application"]["command"]))
         form.pack_start(name_box, False, False, 0)
         form.pack_start(command_box, False, False, 0)
 
@@ -270,10 +272,10 @@ class RtylrShell:
 
         self.dashboard_pill = _label("READY", "status-pill", "status-neutral", xalign=0.5, wrap=False)
         body.pack_start(self.dashboard_pill, False, False, 0)
-        self.dashboard_title = _label("Your POS is ready", "hero-title", xalign=0.5)
+        self.dashboard_title = _label("Your business is ready", "hero-title", xalign=0.5)
         body.pack_start(self.dashboard_title, False, False, 0)
         self.dashboard_message = _label(
-            "Rtylr will launch the configured point-of-sale application.",
+            "Rtylr will open the primary app configured for this business.",
             "hero-copy",
             xalign=0.5,
         )
@@ -284,7 +286,9 @@ class RtylrShell:
 
         actions_box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
         actions_box.set_halign(Gtk.Align.CENTER)
-        actions_box.pack_start(_button("Launch POS", self._start_pos, "primary"), False, False, 0)
+        actions_box.pack_start(
+            _button("Open business app", self._start_app, "primary"), False, False, 0
+        )
         actions_box.pack_start(
             _button("Recovery & settings", lambda *_: self._request_recovery(), "secondary"),
             False,
@@ -334,7 +338,10 @@ class RtylrShell:
         root = self._screen()
         topbar = self._topbar("Recovery & settings")
         topbar.pack_end(
-            _button("Return to POS", lambda *_: self._close_admin(), "ghost"), False, False, 0
+            _button("Return to business app", lambda *_: self._close_admin(), "ghost"),
+            False,
+            False,
+            0,
         )
         root.pack_start(topbar, False, False, 0)
 
@@ -350,22 +357,26 @@ class RtylrShell:
         status_page.add(status_content)
         self.recovery_config_error = _label("", "error-label")
         status_content.pack_start(self.recovery_config_error, False, False, 0)
-        pos_card = self._card(14)
+        app_card = self._card(14)
         heading = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=14)
-        self.recovery_pos_title = _label("POS status", "card-title")
-        self.recovery_pos_pill = _label("CHECKING", "status-pill", "status-neutral", xalign=0.5)
-        heading.pack_start(self.recovery_pos_title, True, True, 0)
-        heading.pack_end(self.recovery_pos_pill, False, False, 0)
-        pos_card.pack_start(heading, False, False, 0)
-        self.recovery_pos_message = _label("Checking the configured application…", "muted")
-        pos_card.pack_start(self.recovery_pos_message, False, False, 0)
-        pos_actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        pos_actions.pack_start(_button("Restart POS", self._restart_pos, "primary"), False, False, 0)
-        pos_actions.pack_start(_button("Stop POS", self._stop_pos, "secondary"), False, False, 0)
-        pos_card.pack_start(pos_actions, False, False, 0)
-        status_content.pack_start(pos_card, False, False, 0)
+        self.recovery_app_title = _label("Business app status", "card-title")
+        self.recovery_app_pill = _label("CHECKING", "status-pill", "status-neutral", xalign=0.5)
+        heading.pack_start(self.recovery_app_title, True, True, 0)
+        heading.pack_end(self.recovery_app_pill, False, False, 0)
+        app_card.pack_start(heading, False, False, 0)
+        self.recovery_app_message = _label("Checking the configured application…", "muted")
+        app_card.pack_start(self.recovery_app_message, False, False, 0)
+        app_actions = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
+        app_actions.pack_start(
+            _button("Restart app", self._restart_app, "primary"), False, False, 0
+        )
+        app_actions.pack_start(
+            _button("Stop app", self._stop_app, "secondary"), False, False, 0
+        )
+        app_card.pack_start(app_actions, False, False, 0)
+        status_content.pack_start(app_card, False, False, 0)
 
-        status_content.pack_start(_label("Terminal health", "section-title"), False, False, 0)
+        status_content.pack_start(_label("Device health", "section-title"), False, False, 0)
         health_grid = Gtk.Grid(column_spacing=14, row_spacing=14)
         for index, (key, title) in enumerate(
             (("network", "Network"), ("storage", "Storage"), ("printing", "Printing"), ("usb", "USB devices"))
@@ -392,7 +403,7 @@ class RtylrShell:
         _add_class(settings_content, "page-body")
         settings_page.add(settings_content)
         settings_card = self._card(14)
-        settings_card.pack_start(_label("POS application", "card-title"), False, False, 0)
+        settings_card.pack_start(_label("Primary business app", "card-title"), False, False, 0)
         settings_card.pack_start(
             _label("Rtylr executes this command directly and never through a shell.", "muted"),
             False,
@@ -410,11 +421,11 @@ class RtylrShell:
         settings_card.pack_start(auto_row, False, False, 0)
         self.settings_result = _label("", "muted")
         settings_card.pack_start(self.settings_result, False, False, 0)
-        save_button = _button("Save POS settings", self._save_settings, "primary")
+        save_button = _button("Save app settings", self._save_settings, "primary")
         save_button.set_halign(Gtk.Align.START)
         settings_card.pack_start(save_button, False, False, 0)
         settings_content.pack_start(settings_card, False, False, 0)
-        notebook.append_page(settings_page, _label("POS settings", "tab-label", wrap=False))
+        notebook.append_page(settings_page, _label("App settings", "tab-label", wrap=False))
 
         system_page = Gtk.ScrolledWindow()
         system_page.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
@@ -434,7 +445,7 @@ class RtylrShell:
             _button("Reconnect network", self._reconnect_network, "secondary"), False, False, 0
         )
         system_actions.pack_start(
-            _button("Reboot terminal", lambda *_: self._confirm_power_action("reboot"), "secondary"),
+            _button("Reboot device", lambda *_: self._confirm_power_action("reboot"), "secondary"),
             False,
             False,
             0,
@@ -477,7 +488,7 @@ class RtylrShell:
 
         log_card = self._card(12)
         log_heading = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=12)
-        log_heading.pack_start(_label("Recent POS log", "card-title"), True, True, 0)
+        log_heading.pack_start(_label("Recent business app log", "card-title"), True, True, 0)
         log_heading.pack_end(_label(self.support_code, "support-code", wrap=False), False, False, 0)
         log_card.pack_start(log_heading, False, False, 0)
         log_scroll = Gtk.ScrolledWindow()
@@ -520,8 +531,8 @@ class RtylrShell:
             self._show_view("setup")
         else:
             self._show_dashboard()
-            if self.config["pos"]["auto_start"]:
-                GLib.timeout_add(700, self._start_pos)
+            if self.config["application"]["auto_start"]:
+                GLib.timeout_add(700, self._start_app)
         if self.initial_command:
             GLib.idle_add(self._handle_command, self.initial_command)
 
@@ -544,28 +555,28 @@ class RtylrShell:
 
     def _show_dashboard(self) -> None:
         self._show_view("dashboard")
-        self._update_pos_status(self.supervisor.snapshot())
+        self._update_app_status(self.supervisor.snapshot())
 
-    def _start_pos(self, *_args: Any) -> bool:
-        self.pos_mode_requested = True
+    def _start_app(self, *_args: Any) -> bool:
+        self.app_mode_requested = True
         started = self.supervisor.start(reset_failures=True)
         snapshot = self.supervisor.snapshot()
-        self._update_pos_status(snapshot)
+        self._update_app_status(snapshot)
         if started:
-            GLib.timeout_add(1300, self._enter_pos_mode)
+            GLib.timeout_add(1300, self._enter_app_mode)
         else:
             self._show_dashboard()
         return False
 
-    def _enter_pos_mode(self) -> bool:
+    def _enter_app_mode(self) -> bool:
         if not self.supervisor.running or self.active_view in {"recovery", "pin", "setup"}:
             return False
         self.window.hide()
         if self.config["ui"]["touch_control"]:
             self.hot_window.show_all()
             GLib.idle_add(self._position_hot_control)
-        self.active_view = "pos"
-        self.pos_mode_requested = False
+        self.active_view = "app"
+        self.app_mode_requested = False
         return False
 
     def _position_hot_control(self) -> bool:
@@ -597,32 +608,32 @@ class RtylrShell:
     def _complete_admin_action(self) -> None:
         action = self.pending_admin_action
         self.pending_admin_action = None
-        if action == "restart-pos":
+        if action in {"restart-app", "restart-pos"}:
             self._show_dashboard()
-            self._restart_pos()
+            self._restart_app()
         else:
             self._show_recovery()
 
     def _show_recovery(self) -> None:
-        self.settings_name_entry.set_text(self.config["pos"]["name"])
-        self.settings_command_entry.set_text(shlex.join(self.config["pos"]["command"]))
-        self.settings_auto_switch.set_active(self.config["pos"]["auto_start"])
+        self.settings_name_entry.set_text(self.config["application"]["name"])
+        self.settings_command_entry.set_text(shlex.join(self.config["application"]["command"]))
+        self.settings_auto_switch.set_active(self.config["application"]["auto_start"])
         self.settings_result.set_text("")
         self.system_result.set_text("")
         self.new_pin_entry.set_text("")
         self.confirm_pin_entry.set_text("")
         _set_feedback(self.pin_change_result, "", "muted")
-        self.log_view.get_buffer().set_text(actions.read_log_tail(self.paths.pos_log))
+        self.log_view.get_buffer().set_text(actions.read_log_tail(self.paths.application_log))
         self._show_view("recovery")
         self._refresh_health()
-        self._update_pos_status(self.supervisor.snapshot())
+        self._update_app_status(self.supervisor.snapshot())
 
     def _close_admin(self) -> None:
         self.pin_buffer = ""
         self.pending_admin_action = None
         if self.supervisor.running:
             self.active_view = "dashboard"
-            self._enter_pos_mode()
+            self._enter_app_mode()
         else:
             self._show_dashboard()
 
@@ -662,27 +673,27 @@ class RtylrShell:
         else:
             self.pin_error.set_text("Incorrect PIN.")
 
-    def _parse_pos_fields(self, name: str, command_text: str) -> dict[str, Any]:
+    def _parse_app_fields(self, name: str, command_text: str) -> dict[str, Any]:
         name = name.strip()
         if not name:
-            raise ConfigError("Enter a POS display name.")
+            raise ConfigError("Enter a business app display name.")
         try:
             command = shlex.split(command_text)
         except ValueError as exc:
             raise ConfigError(f"Invalid command: {exc}") from exc
         if not command or not Path(command[0]).is_absolute():
-            raise ConfigError("The POS command must start with an absolute executable path.")
+            raise ConfigError("The app command must start with an absolute executable path.")
         updated = deepcopy(self.config)
-        updated["pos"]["name"] = name
-        updated["pos"]["command"] = command
-        updated["pos"]["working_directory"] = str(Path(command[0]).parent)
+        updated["application"]["name"] = name
+        updated["application"]["command"] = command
+        updated["application"]["working_directory"] = str(Path(command[0]).parent)
         return updated
 
     def _finish_setup(self, *_args: Any) -> None:
         pin = self.setup_pin_entry.get_text()
         confirmation = self.setup_pin_confirm_entry.get_text()
         try:
-            updated = self._parse_pos_fields(
+            updated = self._parse_app_fields(
                 self.setup_name_entry.get_text(), self.setup_command_entry.get_text()
             )
             if pin != confirmation:
@@ -697,27 +708,27 @@ class RtylrShell:
             self.setup_error.set_text(str(exc))
             return
         self.config = updated
-        self.supervisor.update_config(self.config["pos"])
+        self.supervisor.update_config(self.config["application"])
         self._set_config_error("")
         self.setup_error.set_text("")
         self._show_dashboard()
-        if self.config["pos"]["auto_start"]:
-            GLib.timeout_add(500, self._start_pos)
+        if self.config["application"]["auto_start"]:
+            GLib.timeout_add(500, self._start_app)
 
     def _save_settings(self, *_args: Any) -> None:
         try:
-            updated = self._parse_pos_fields(
+            updated = self._parse_app_fields(
                 self.settings_name_entry.get_text(), self.settings_command_entry.get_text()
             )
-            updated["pos"]["auto_start"] = self.settings_auto_switch.get_active()
+            updated["application"]["auto_start"] = self.settings_auto_switch.get_active()
             self.config_store.save(updated)
         except (ConfigError, OSError) as exc:
             _set_feedback(self.settings_result, str(exc), "error-label")
             return
         self.config = updated
-        self.supervisor.update_config(self.config["pos"])
+        self.supervisor.update_config(self.config["application"])
         self._set_config_error("")
-        _set_feedback(self.settings_result, "POS settings saved.", "success-label")
+        _set_feedback(self.settings_result, "Business app settings saved.", "success-label")
 
     def _change_pin(self, *_args: Any) -> None:
         pin = self.new_pin_entry.get_text()
@@ -743,18 +754,18 @@ class RtylrShell:
         self.dashboard_config_error.set_text(display)
         self.recovery_config_error.set_text(display)
 
-    def _restart_pos(self, *_args: Any) -> None:
-        self.pos_mode_requested = True
+    def _restart_app(self, *_args: Any) -> None:
+        self.app_mode_requested = True
         if self.supervisor.restart():
-            self._update_pos_status(self.supervisor.snapshot())
-            GLib.timeout_add(1200, self._enter_pos_mode)
+            self._update_app_status(self.supervisor.snapshot())
+            GLib.timeout_add(1200, self._enter_app_mode)
         else:
-            self._update_pos_status(self.supervisor.snapshot())
+            self._update_app_status(self.supervisor.snapshot())
 
-    def _stop_pos(self, *_args: Any) -> None:
+    def _stop_app(self, *_args: Any) -> None:
         self.supervisor.stop()
-        self.pos_mode_requested = False
-        self._update_pos_status(self.supervisor.snapshot())
+        self.app_mode_requested = False
+        self._update_app_status(self.supervisor.snapshot())
 
     def _refresh_health(self) -> None:
         if self.health_refreshing:
@@ -783,10 +794,10 @@ class RtylrShell:
                 detail.set_text(item.detail)
             if item.status == "ok":
                 okay += 1
-        self.setup_health.set_text(f"Terminal readiness: {okay} of {len(items)} checks healthy")
+        self.setup_health.set_text(f"Device readiness: {okay} of {len(items)} checks healthy")
         return False
 
-    def _update_pos_status(self, snapshot: SupervisorSnapshot) -> None:
+    def _update_app_status(self, snapshot: SupervisorSnapshot) -> None:
         mapping = {
             "running": ("RUNNING", "status-ok"),
             "restarting": ("RECOVERING", "status-warning"),
@@ -796,16 +807,16 @@ class RtylrShell:
             "idle": ("READY", "status-neutral"),
         }
         text, style = mapping.get(snapshot.status, (snapshot.status.upper(), "status-neutral"))
-        for pill in (self.dashboard_pill, self.recovery_pos_pill):
+        for pill in (self.dashboard_pill, self.recovery_app_pill):
             context = pill.get_style_context()
             for name in ("status-ok", "status-warning", "status-error", "status-neutral"):
                 context.remove_class(name)
             context.add_class(style)
             pill.set_text(text)
-        self.dashboard_title.set_text(self.config["pos"]["name"])
+        self.dashboard_title.set_text(self.config["application"]["name"])
         self.dashboard_message.set_text(snapshot.message)
-        self.recovery_pos_title.set_text(self.config["pos"]["name"])
-        self.recovery_pos_message.set_text(snapshot.message)
+        self.recovery_app_title.set_text(self.config["application"]["name"])
+        self.recovery_app_message.set_text(snapshot.message)
 
     def _run_action(self, label: str, action: Callable[[], actions.ActionResult]) -> None:
         self.system_result.set_text(f"{label}…")
@@ -831,9 +842,11 @@ class RtylrShell:
             modal=True,
             message_type=Gtk.MessageType.WARNING,
             buttons=Gtk.ButtonsType.NONE,
-            text=f"{verb} this terminal?",
+            text=f"{verb} this device?",
         )
-        dialog.format_secondary_text("The POS will be stopped and any unsaved work may be lost.")
+        dialog.format_secondary_text(
+            "The business app will be stopped and any unsaved work may be lost."
+        )
         dialog.add_button("Cancel", Gtk.ResponseType.CANCEL)
         dialog.add_button(verb, Gtk.ResponseType.OK)
         response = dialog.run()
@@ -844,8 +857,8 @@ class RtylrShell:
     def _handle_command(self, command: str) -> bool:
         if command == "show-recovery":
             self._request_recovery()
-        elif command == "restart-pos":
-            self._request_admin("restart-pos")
+        elif command in {"restart-app", "restart-pos"}:
+            self._request_admin("restart-app")
         elif command == "show-shell":
             self._show_dashboard()
         elif command == "quit":
@@ -876,28 +889,28 @@ class RtylrShell:
             clock.set_text(now if self.config["ui"]["show_clock"] else "")
 
         snapshot = self.supervisor.poll()
-        self._update_pos_status(snapshot)
+        self._update_app_status(snapshot)
         if self.last_status == "restarting" and snapshot.status == "running":
-            self.pos_mode_requested = True
-            GLib.timeout_add(1000, self._enter_pos_mode)
+            self.app_mode_requested = True
+            GLib.timeout_add(1000, self._enter_app_mode)
         elif self.last_status == "running" and snapshot.status != "running":
-            self.pos_mode_requested = True
-            if self.active_view == "pos":
+            self.app_mode_requested = True
+            if self.active_view == "app":
                 self._show_dashboard()
         self.last_status = snapshot.status
 
         if time.monotonic() - self.last_health_refresh >= 10:
             self._refresh_health()
         if self.active_view == "recovery":
-            self.log_view.get_buffer().set_text(actions.read_log_tail(self.paths.pos_log))
+            self.log_view.get_buffer().set_text(actions.read_log_tail(self.paths.application_log))
         return True
 
 
 def _requested_command(arguments: argparse.Namespace) -> str | None:
     if arguments.recovery:
         return "show-recovery"
-    if arguments.restart_pos:
-        return "restart-pos"
+    if arguments.restart_app or arguments.restart_pos:
+        return "restart-app"
     if arguments.show_shell:
         return "show-shell"
     return None
@@ -906,7 +919,10 @@ def _requested_command(arguments: argparse.Namespace) -> str | None:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Rtylr OS appliance shell")
     parser.add_argument("--recovery", action="store_true", help="open protected recovery")
-    parser.add_argument("--restart-pos", action="store_true", help="restart the configured POS")
+    parser.add_argument(
+        "--restart-app", action="store_true", help="restart the primary business app"
+    )
+    parser.add_argument("--restart-pos", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--show-shell", action="store_true", help="show the shell dashboard")
     arguments = parser.parse_args(argv)
     command = _requested_command(arguments)

@@ -7,7 +7,7 @@ DEFAULT_CONFIG=/opt/rtylr/config/shell.json
 RUNTIME_CONFIG=${STATE_DIR}/shell.json
 
 install -d -m 0750 -o rtylr -g rtylr "$STATE_DIR" "$LOG_DIR"
-install -d -m 0755 /opt/rtylr/pos /opt/rtylr/agent
+install -d -m 0755 /opt/rtylr/apps /opt/rtylr/agent
 
 if [[ ! -f "$RUNTIME_CONFIG" && -f "$DEFAULT_CONFIG" ]]; then
   install -m 0640 -o rtylr -g rtylr "$DEFAULT_CONFIG" "$RUNTIME_CONFIG"

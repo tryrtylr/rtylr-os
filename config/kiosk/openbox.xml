@@ -32,8 +32,8 @@
     <keybind key="C-A-r">
       <action name="Execute"><command>/usr/local/bin/rtylr-shell --recovery</command></action>
     </keybind>
-    <keybind key="C-A-p">
-      <action name="Execute"><command>/usr/local/bin/rtylr-shell --restart-pos</command></action>
+    <keybind key="C-A-a">
+      <action name="Execute"><command>/usr/local/bin/rtylr-shell --restart-app</command></action>
     </keybind>
   </keyboard>
   <mouse>

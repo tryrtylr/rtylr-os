@@ -1,4 +1,4 @@
-"""Bounded POS process supervision without invoking a command shell."""
+"""Bounded business-application supervision without invoking a shell."""
 
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ class SupervisorSnapshot:
         return asdict(self)
 
 
-class PosSupervisor:
+class AppSupervisor:
     def __init__(
         self,
         config: Mapping[str, Any],
@@ -69,7 +69,10 @@ class PosSupervisor:
         command = self.config.get("command", [])
         if not command or not self.executable_check(command[0]):
             self.status = "missing"
-            self.message = f"POS executable not found: {command[0] if command else 'not configured'}"
+            self.message = (
+                f"Business app executable not found: "
+                f"{command[0] if command else 'not configured'}"
+            )
             self.process = None
             return False
         working_directory = self.config.get("working_directory")
@@ -93,10 +96,10 @@ class PosSupervisor:
             self._close_log()
             self.process = None
             self.status = "failed"
-            self.message = f"Could not start POS: {exc}"
+            self.message = f"Could not start business app: {exc}"
             return False
         self.status = "running"
-        self.message = f"{self.config.get('name', 'POS')} is running"
+        self.message = f"{self.config.get('name', 'Business app')} is running"
         return True
 
     def poll(self) -> SupervisorSnapshot:
@@ -113,7 +116,7 @@ class PosSupervisor:
                 self._close_log()
                 if self._manual_stop:
                     self.status = "stopped"
-                    self.message = "POS stopped"
+                    self.message = "Business app stopped"
                 else:
                     self._handle_crash(now, return_code)
         return self.snapshot()
@@ -127,14 +130,14 @@ class PosSupervisor:
         self._crashes.append(now)
         if maximum == 0 or len(self._crashes) >= maximum:
             self.status = "failed"
-            self.message = f"POS stopped repeatedly (exit {return_code})"
+            self.message = f"Business app stopped repeatedly (exit {return_code})"
             self._restart_at = None
             return
         backoff = restart.get("backoff_seconds", [1, 2, 5, 10, 30])
         delay = int(backoff[min(len(self._crashes) - 1, len(backoff) - 1)])
         self._restart_at = now + delay
         self.status = "restarting"
-        self.message = f"POS exited ({return_code}); restarting in {delay}s"
+        self.message = f"Business app exited ({return_code}); restarting in {delay}s"
 
     def restart(self) -> bool:
         self.stop()
@@ -160,7 +163,7 @@ class PosSupervisor:
         self.process = None
         self._close_log()
         self.status = "stopped"
-        self.message = "POS stopped"
+        self.message = "Business app stopped"
 
     def _close_log(self) -> None:
         if self._log_handle is not None:
@@ -179,3 +182,7 @@ class PosSupervisor:
             self.last_exit_code,
             remaining,
         )
+
+
+# Import compatibility for integrations written against Rtylr OS 0.2.
+PosSupervisor = AppSupervisor

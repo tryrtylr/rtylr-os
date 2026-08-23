@@ -22,10 +22,10 @@ DEFAULT_CONFIG: dict[str, Any] = {
         "wordmark": "RTYLR",
         "accent": "#7c5cff",
     },
-    "pos": {
-        "name": "Your POS",
-        "command": ["/opt/rtylr/pos/rtylr-pos"],
-        "working_directory": "/opt/rtylr/pos",
+    "application": {
+        "name": "Your business app",
+        "command": ["/opt/rtylr/apps/business-app"],
+        "working_directory": "/opt/rtylr/apps",
         "auto_start": True,
         "restart": {
             "max_attempts": 5,
@@ -43,7 +43,7 @@ class Paths:
     default_config: Path
     runtime_config: Path
     state_file: Path
-    pos_log: Path
+    application_log: Path
     device_id: Path
 
     @classmethod
@@ -52,7 +52,7 @@ class Paths:
             default_config=Path("/opt/rtylr/config/shell.json"),
             runtime_config=Path("/var/lib/rtylr/shell.json"),
             state_file=Path("/var/lib/rtylr/shell-state.json"),
-            pos_log=Path("/var/log/rtylr/pos.log"),
+            application_log=Path("/var/log/rtylr/application.log"),
             device_id=Path("/var/lib/rtylr/device-id"),
         )
 
@@ -80,6 +80,18 @@ def _read_json(path: Path) -> dict[str, Any]:
     return value
 
 
+def _normalize_legacy_config(config: Mapping[str, Any]) -> dict[str, Any]:
+    """Map the 0.2 `pos` key to the neutral `application` model."""
+    normalized = deepcopy(dict(config))
+    legacy = normalized.pop("pos", None)
+    current = normalized.get("application")
+    if isinstance(legacy, Mapping):
+        normalized["application"] = (
+            deep_merge(legacy, current) if isinstance(current, Mapping) else deepcopy(dict(legacy))
+        )
+    return normalized
+
+
 def _atomic_write_json(path: Path, value: Mapping[str, Any], mode: int = 0o640) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary_name = ""
@@ -105,10 +117,14 @@ def _atomic_write_json(path: Path, value: Mapping[str, Any], mode: int = 0o640) 
 
 def validate_config(config: Mapping[str, Any]) -> None:
     brand = config.get("brand")
-    pos = config.get("pos")
+    application = config.get("application")
     ui = config.get("ui")
-    if not isinstance(brand, Mapping) or not isinstance(pos, Mapping) or not isinstance(ui, Mapping):
-        raise ConfigError("brand, pos, and ui must be objects")
+    if (
+        not isinstance(brand, Mapping)
+        or not isinstance(application, Mapping)
+        or not isinstance(ui, Mapping)
+    ):
+        raise ConfigError("brand, application, and ui must be objects")
 
     for key in ("name", "wordmark"):
         if not isinstance(brand.get(key), str) or not brand[key].strip():
@@ -118,35 +134,35 @@ def validate_config(config: Mapping[str, Any]) -> None:
     ):
         raise ConfigError("brand.accent must be a six-digit hex color")
 
-    if not isinstance(pos.get("name"), str) or not pos["name"].strip():
-        raise ConfigError("pos.name must be a non-empty string")
-    command = pos.get("command")
+    if not isinstance(application.get("name"), str) or not application["name"].strip():
+        raise ConfigError("application.name must be a non-empty string")
+    command = application.get("command")
     if not isinstance(command, list) or not command or not all(
         isinstance(part, str) and part for part in command
     ):
-        raise ConfigError("pos.command must be a non-empty string array")
+        raise ConfigError("application.command must be a non-empty string array")
     if not Path(command[0]).is_absolute():
-        raise ConfigError("pos.command executable must be an absolute path")
-    working_directory = pos.get("working_directory")
+        raise ConfigError("application.command executable must be an absolute path")
+    working_directory = application.get("working_directory")
     if not isinstance(working_directory, str) or not Path(working_directory).is_absolute():
-        raise ConfigError("pos.working_directory must be an absolute path")
-    if not isinstance(pos.get("auto_start"), bool):
-        raise ConfigError("pos.auto_start must be true or false")
+        raise ConfigError("application.working_directory must be an absolute path")
+    if not isinstance(application.get("auto_start"), bool):
+        raise ConfigError("application.auto_start must be true or false")
 
-    restart = pos.get("restart")
+    restart = application.get("restart")
     if not isinstance(restart, Mapping):
-        raise ConfigError("pos.restart must be an object")
+        raise ConfigError("application.restart must be an object")
     maximum = restart.get("max_attempts")
     window = restart.get("window_seconds")
     backoff = restart.get("backoff_seconds")
     if not isinstance(maximum, int) or not 0 <= maximum <= 20:
-        raise ConfigError("pos.restart.max_attempts must be between 0 and 20")
+        raise ConfigError("application.restart.max_attempts must be between 0 and 20")
     if not isinstance(window, int) or not 10 <= window <= 3600:
-        raise ConfigError("pos.restart.window_seconds must be between 10 and 3600")
+        raise ConfigError("application.restart.window_seconds must be between 10 and 3600")
     if not isinstance(backoff, list) or not backoff or not all(
         isinstance(delay, int) and 0 <= delay <= 300 for delay in backoff
     ):
-        raise ConfigError("pos.restart.backoff_seconds must contain delays from 0 to 300")
+        raise ConfigError("application.restart.backoff_seconds must contain delays from 0 to 300")
 
     if not isinstance(ui.get("show_clock"), bool) or not isinstance(ui.get("touch_control"), bool):
         raise ConfigError("ui flags must be true or false")
@@ -157,14 +173,17 @@ class ConfigStore:
         self.paths = paths
 
     def load(self) -> dict[str, Any]:
-        config = deep_merge(DEFAULT_CONFIG, _read_json(self.paths.default_config))
-        config = deep_merge(config, _read_json(self.paths.runtime_config))
+        defaults = _normalize_legacy_config(_read_json(self.paths.default_config))
+        runtime = _normalize_legacy_config(_read_json(self.paths.runtime_config))
+        config = deep_merge(DEFAULT_CONFIG, defaults)
+        config = deep_merge(config, runtime)
         validate_config(config)
         return config
 
     def save(self, config: Mapping[str, Any]) -> None:
-        validate_config(config)
-        _atomic_write_json(self.paths.runtime_config, config)
+        normalized = _normalize_legacy_config(config)
+        validate_config(normalized)
+        _atomic_write_json(self.paths.runtime_config, normalized)
 
 
 class StateStore:

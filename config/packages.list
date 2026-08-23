@@ -6,7 +6,7 @@ openssh-client
 usbutils
 udev
 
-# POS peripherals
+# Common business peripherals
 cups
 cups-client
 libusb-1.0-0

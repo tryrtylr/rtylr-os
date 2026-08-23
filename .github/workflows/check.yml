@@ -1,21 +1,123 @@
-name: Check
+name: Build and release ISO
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
+
+concurrency:
+  group: rtylr-iso-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  source:
-    runs-on: ubuntu-latest
+  iso:
+    name: Complete AMD64 ISO
+    runs-on: ubuntu-24.04
+    timeout-minutes: 180
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Check out source
+        uses: actions/checkout@v4
         with:
-          python-version: "3.12"
-      - name: Install configuration validator
-        run: python -m pip install PyYAML
+          fetch-depth: 2
+          persist-credentials: false
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends \
+            curl \
+            libarchive-tools \
+            python3-yaml \
+            rsync \
+            xorriso
+
       - name: Validate source and run unit tests
         run: make check
+
+      - name: Build complete ISO
+        run: make iso
+
+      - name: Validate and package ISO
+        run: make package-release
+
+      - name: Write build summary
+        run: |
+          version="$(make --no-print-directory print-version)"
+          iso_name="rtylr-os-${version}-amd64.iso"
+          {
+            echo "## Rtylr OS ${version}"
+            echo
+            echo "The complete ISO built and passed payload, checksum, BIOS, and UEFI validation."
+            echo
+            echo '```text'
+            cat "dist/release/${iso_name}.sha256"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Decide whether to publish
+        id: release
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(make --no-print-directory print-version)"
+          tag="v${version}"
+          previous_version="$(git show HEAD^:VERSION 2>/dev/null | tr -d '[:space:]' || true)"
+
+          if [[ "${GITHUB_EVENT_NAME}" == "push" && "$previous_version" == "$version" ]]; then
+            echo "mode=skip" >> "$GITHUB_OUTPUT"
+            echo "Version ${version} did not change; this run remains a full CI build."
+            exit 0
+          fi
+
+          if gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${tag}" >/dev/null 2>&1; then
+            tag_commit="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${tag}" --jq .sha)"
+            if [[ "$tag_commit" != "$GITHUB_SHA" ]]; then
+              echo "Version ${version} is already tagged at ${tag_commit}." >&2
+              echo "Bump VERSION before publishing another release." >&2
+              exit 1
+            fi
+          fi
+
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "mode=update" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=create" >> "$GITHUB_OUTPUT"
+          fi
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release
+        if: steps.release.outputs.mode == 'create' || steps.release.outputs.mode == 'update'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_MODE: ${{ steps.release.outputs.mode }}
+          RELEASE_TAG: ${{ steps.release.outputs.tag }}
+          RELEASE_VERSION: ${{ steps.release.outputs.version }}
+        run: |
+          mapfile -d '' assets < <(
+            find dist/release -maxdepth 1 -type f \
+              ! -name RELEASE_NOTES.md \
+              -print0 | sort -z
+          )
+          if [[ "$RELEASE_MODE" == "create" ]]; then
+            gh release create "$RELEASE_TAG" "${assets[@]}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "Rtylr OS ${RELEASE_VERSION}" \
+              --notes-file dist/release/RELEASE_NOTES.md
+          else
+            gh release edit "$RELEASE_TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "Rtylr OS ${RELEASE_VERSION}" \
+              --notes-file dist/release/RELEASE_NOTES.md
+            gh release upload "$RELEASE_TAG" "${assets[@]}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --clobber
+          fi

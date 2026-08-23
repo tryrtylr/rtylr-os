@@ -6,9 +6,9 @@ autoinstall:
     layout: us
   timezone: Etc/UTC
   identity:
-    hostname: rtylr-pos
+    hostname: rtylr-business
     username: rtylr
-    # Replaced by the build with RTYLR_INSTALL_PASSWORD_HASH.
+    # The public build locks password login; deployments may inject a crypt hash.
     password: "__RTYLR_INSTALL_PASSWORD_HASH__"
   ssh:
     install-server: false
@@ -43,7 +43,7 @@ autoinstall:
     - logrotate
     - vim-tiny
   late-commands:
-    - install -d -m 0755 /target/opt/rtylr/config /target/opt/rtylr/shell /target/opt/rtylr/pos /target/opt/rtylr/agent /target/usr/local/lib/rtylr /target/etc/lightdm/lightdm.conf.d /target/etc/polkit-1/rules.d /target/etc/logrotate.d /target/etc/xdg/openbox /target/usr/share/xsessions
+    - install -d -m 0755 /target/opt/rtylr/config /target/opt/rtylr/shell /target/opt/rtylr/apps /target/opt/rtylr/agent /target/usr/local/lib/rtylr /target/etc/lightdm/lightdm.conf.d /target/etc/polkit-1/rules.d /target/etc/logrotate.d /target/etc/xdg/openbox /target/usr/share/xsessions
     - install -d -m 0750 /target/var/lib/rtylr /target/var/log/rtylr
     - cp -a /cdrom/rtylr-shell/. /target/opt/rtylr/shell/
     - install -m 0755 /cdrom/rtylr-shell/rtylr-shell /target/usr/local/bin/rtylr-shell
@@ -55,6 +55,7 @@ autoinstall:
     - install -m 0644 /cdrom/rtylr-config/kiosk/autologin.conf /target/etc/lightdm/lightdm.conf.d/50-rtylr-autologin.conf
     - install -m 0644 /cdrom/rtylr-config/polkit/49-rtylr-appliance.rules /target/etc/polkit-1/rules.d/49-rtylr-appliance.rules
     - install -m 0644 /cdrom/rtylr-config/logrotate/rtylr /target/etc/logrotate.d/rtylr
+    - install -m 0644 /cdrom/rtylr-version /target/etc/rtylr-release
     - cp /cdrom/rtylr-config/systemd/*.service /target/etc/systemd/system/
     - install -m 0755 /cdrom/scripts/first-boot.sh /target/usr/local/lib/rtylr/first-boot.sh
     - curtin in-target -- install -d -m 0755 -o rtylr -g rtylr /home/rtylr/.config/openbox

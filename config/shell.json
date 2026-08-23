@@ -4,12 +4,12 @@
     "wordmark": "RTYLR",
     "accent": "#7c5cff"
   },
-  "pos": {
-    "name": "Your POS",
+  "application": {
+    "name": "Your business app",
     "command": [
-      "/opt/rtylr/pos/rtylr-pos"
+      "/opt/rtylr/apps/business-app"
     ],
-    "working_directory": "/opt/rtylr/pos",
+    "working_directory": "/opt/rtylr/apps",
     "auto_start": true,
     "restart": {
       "max_attempts": 5,

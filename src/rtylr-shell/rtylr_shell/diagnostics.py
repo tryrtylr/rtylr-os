@@ -1,4 +1,4 @@
-"""Fast, local-only health checks for common POS terminal failures."""
+"""Fast, local-only health checks for a Rtylr business device."""
 
 from __future__ import annotations
 

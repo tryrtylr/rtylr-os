@@ -62,5 +62,5 @@ def read_log_tail(path: Path, maximum_lines: int = 120) -> str:
     try:
         lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
     except OSError:
-        return "No POS log is available yet."
-    return "\n".join(lines[-maximum_lines:]) or "The POS log is empty."
+        return "No business app log is available yet."
+    return "\n".join(lines[-maximum_lines:]) or "The business app log is empty."

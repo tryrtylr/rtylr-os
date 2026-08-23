@@ -5,26 +5,32 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BASE="${ROOT_DIR}/cache/ubuntu-26.04-live-server-amd64.iso"
 WORK_DIR="${ROOT_DIR}/work/iso"
 DIST_DIR="${ROOT_DIR}/dist"
-OUTPUT="${DIST_DIR}/rtylr-os-0.2.0-amd64.iso"
+VERSION="$(tr -d '[:space:]' < "${ROOT_DIR}/VERSION")"
+OUTPUT="${DIST_DIR}/rtylr-os-${VERSION}-amd64.iso"
 SHELL_STAGE="${WORK_DIR}/rtylr-shell"
+INSTALL_PASSWORD_HASH="${RTYLR_INSTALL_PASSWORD_HASH:-!}"
 
 [[ -f "$BASE" ]] || { printf 'Verified base ISO is required before building.\n' >&2; exit 1; }
-[[ -n "${RTYLR_INSTALL_PASSWORD_HASH:-}" ]] || {
-  printf 'RTYLR_INSTALL_PASSWORD_HASH is required; do not embed a reusable password in the image.\n' >&2
+[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]] || {
+  printf 'VERSION is not a valid release version: %s\n' "$VERSION" >&2
   exit 1
 }
+if [[ "$INSTALL_PASSWORD_HASH" != "!" && ! "$INSTALL_PASSWORD_HASH" =~ ^\$(5|6|y)\$ ]]; then
+  printf 'RTYLR_INSTALL_PASSWORD_HASH must be a SHA-256, SHA-512, yescrypt hash, or !.\n' >&2
+  exit 1
+fi
 rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR" "$DIST_DIR"
 rm -f "$OUTPUT" "${OUTPUT}.sha256"
 
-printf 'Extracting Ubuntu base ISO...\n'
-bsdtar -xf "$BASE" -C "$WORK_DIR"
-# ISO filesystems preserve read-only modes; make the staging tree writable
-# before injecting NoCloud metadata and the updated boot configuration.
-chmod -R u+rwX "$WORK_DIR"
+printf 'Extracting the Ubuntu boot configuration...\n'
+mkdir -p "$WORK_DIR/boot/grub"
+xorriso -osirrox on -indev "$BASE" \
+  -extract /boot/grub/grub.cfg "$WORK_DIR/boot/grub/grub.cfg" \
+  >/dev/null 2>&1
 
 mkdir -p "$WORK_DIR/nocloud"
-sed "s|__RTYLR_INSTALL_PASSWORD_HASH__|${RTYLR_INSTALL_PASSWORD_HASH}|g" \
+sed "s|__RTYLR_INSTALL_PASSWORD_HASH__|${INSTALL_PASSWORD_HASH}|g" \
   "$ROOT_DIR/config/autoinstall.yaml" > "$WORK_DIR/nocloud/user-data"
 : > "$WORK_DIR/nocloud/meta-data"
 if grep -q '__RTYLR_INSTALL_PASSWORD_HASH__' "$WORK_DIR/nocloud/user-data"; then
@@ -58,6 +64,7 @@ xorriso \
   -map "$ROOT_DIR/config" /rtylr-config \
   -map "$SHELL_STAGE" /rtylr-shell \
   -map "$ROOT_DIR/scripts/first-boot.sh" /scripts/first-boot.sh \
+  -map "$ROOT_DIR/VERSION" /rtylr-version \
   -volid RTYLROS \
   -commit \
   -end

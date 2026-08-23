@@ -25,7 +25,7 @@ class DiagnosticTests(unittest.TestCase):
         def runner(command, _timeout):
             if command == ["lpstat", "-r"]:
                 return CommandResult(0, "scheduler is running")
-            return CommandResult(0, "printer receipt is idle\nprinter kitchen is idle")
+            return CommandResult(0, "printer office is idle\nprinter shipping is idle")
 
         result = printing_health(runner=runner)
         self.assertEqual(result.status, "ok")
@@ -37,7 +37,7 @@ class DiagnosticTests(unittest.TestCase):
                 return CommandResult(0, "scheduler is running")
             return CommandResult(
                 0,
-                "printer receipt is idle\nprinter kitchen disabled since Monday",
+                "printer office is idle\nprinter shipping disabled since Monday",
             )
 
         result = printing_health(runner=runner)

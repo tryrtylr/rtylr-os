@@ -11,6 +11,7 @@ done < <(find "$ROOT_DIR/scripts" "$ROOT_DIR/config/kiosk" -type f -name '*.sh')
 for executable in \
   "$ROOT_DIR/scripts/build.sh" \
   "$ROOT_DIR/scripts/first-boot.sh" \
+  "$ROOT_DIR/scripts/package-release.sh" \
   "$ROOT_DIR/scripts/validate-iso.sh" \
   "$ROOT_DIR/config/kiosk/session.sh" \
   "$ROOT_DIR/src/rtylr-shell/rtylr-shell"; do
@@ -28,9 +29,21 @@ import sys
 from xml.etree import ElementTree
 
 root = Path(sys.argv[1])
+version = (root / "VERSION").read_text(encoding="utf-8").strip()
+assert version.count(".") >= 2 and all(version.split(".")), "VERSION must be populated"
+package_init = (root / "src/rtylr-shell/rtylr_shell/__init__.py").read_text(encoding="utf-8")
+assert f'__version__ = "{version}"' in package_init
+
 ElementTree.parse(root / "config/kiosk/openbox.xml")
 openbox_text = (root / "config/kiosk/openbox.xml").read_text(encoding="utf-8")
 assert 'class="*" type="normal"' in openbox_text
+assert "--restart-app" in openbox_text
+
+shell_config = __import__("json").loads(
+    (root / "config/shell.json").read_text(encoding="utf-8")
+)
+assert "application" in shell_config
+assert "pos" not in shell_config
 
 desktop = ConfigParser(interpolation=None)
 desktop.read(root / "config/kiosk/rtylr.desktop")
@@ -54,11 +67,16 @@ else:
         "/cdrom/rtylr-config/kiosk/session.sh",
         "/cdrom/rtylr-config/kiosk/rtylr.desktop",
         "/cdrom/rtylr-config/logrotate/rtylr",
+        "/cdrom/rtylr-version",
         "/cdrom/scripts/first-boot.sh",
     ):
         assert source in late_commands, f"Installer does not copy {source}"
 PY
 PYTHONPATH="$ROOT_DIR/src/rtylr-shell" python3 -m unittest discover -s "$ROOT_DIR/tests" -v
+
+grep -Fq 'run: make iso' "$ROOT_DIR/.github/workflows/check.yml"
+grep -Fq 'run: make package-release' "$ROOT_DIR/.github/workflows/check.yml"
+grep -Fq 'gh release create' "$ROOT_DIR/.github/workflows/check.yml"
 
 if ! grep -q '__RTYLR_INSTALL_PASSWORD_HASH__' "$ROOT_DIR/config/autoinstall.yaml"; then
   printf 'Autoinstall password placeholder is missing.\n' >&2
