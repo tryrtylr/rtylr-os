@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "admin-pin-recovery-failed",
+  "domain": "admin-pin",
+  "condition": "recovery-failed",
+  "title": "Admin access did not recover",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Admin access remains failed after one bounded recovery attempt."
+  ],
+  "operator_steps": [
+    "Leave the recovery view open and stop retrying.",
+    "Escalate with the support code and last successful action."
+  ],
+  "admin_steps": [
+    "Collect diagnostics and use the documented support path."
+  ],
+  "success_criteria": [
+    "Admin access recovers once and remains healthy after refresh."
+  ],
+  "tags": [
+    "continuity",
+    "admin-pin",
+    "recovery-failed",
+    "critical"
+  ]
+}
