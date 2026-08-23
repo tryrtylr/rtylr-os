@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "wifi-unsafe-state",
+  "domain": "wifi",
+  "condition": "unsafe-state",
+  "title": "Wi-Fi is in an unsafe state",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Wi-Fi cannot confirm whether the last operation completed safely."
+  ],
+  "operator_steps": [
+    "Stop using the affected capability immediately.",
+    "Do not repeat or reverse the unknown operation."
+  ],
+  "admin_steps": [
+    "Isolate the capability and escalate before restoring service."
+  ],
+  "success_criteria": [
+    "Wi-Fi has a verified state and passes a non-destructive check."
+  ],
+  "tags": [
+    "continuity",
+    "wifi",
+    "unsafe-state",
+    "critical"
+  ]
+}
