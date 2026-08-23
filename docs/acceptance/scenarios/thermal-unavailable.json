@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "thermal-unavailable",
+  "domain": "thermal",
+  "condition": "unavailable",
+  "title": "Thermal state is unavailable",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Thermal state reports unavailable."
+  ],
+  "operator_steps": [
+    "Open Recovery & settings and confirm the affected status.",
+    "Pause new work that depends on this capability."
+  ],
+  "admin_steps": [
+    "Use the protected recovery control for this capability once."
+  ],
+  "success_criteria": [
+    "Thermal state reports available and a read-only check succeeds."
+  ],
+  "tags": [
+    "continuity",
+    "thermal",
+    "unavailable",
+    "critical"
+  ]
+}

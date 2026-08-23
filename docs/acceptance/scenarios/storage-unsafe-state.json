@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "storage-unsafe-state",
+  "domain": "storage",
+  "condition": "unsafe-state",
+  "title": "Local storage is in an unsafe state",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Local storage cannot confirm whether the last operation completed safely."
+  ],
+  "operator_steps": [
+    "Stop using the affected capability immediately.",
+    "Do not repeat or reverse the unknown operation."
+  ],
+  "admin_steps": [
+    "Isolate the capability and escalate before restoring service."
+  ],
+  "success_criteria": [
+    "Local storage has a verified state and passes a non-destructive check."
+  ],
+  "tags": [
+    "continuity",
+    "storage",
+    "unsafe-state",
+    "critical"
+  ]
+}

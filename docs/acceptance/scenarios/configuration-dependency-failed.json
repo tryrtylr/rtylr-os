@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "configuration-dependency-failed",
+  "domain": "configuration",
+  "condition": "dependency-failed",
+  "title": "Rtylr configuration has a failed dependency",
+  "severity": "error",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Rtylr configuration reports an upstream dependency failure."
+  ],
+  "operator_steps": [
+    "Review adjacent health cards for the upstream failure.",
+    "Keep the current error visible for support."
+  ],
+  "admin_steps": [
+    "Recover the named dependency before restarting this capability."
+  ],
+  "success_criteria": [
+    "Rtylr configuration and its dependency both report healthy."
+  ],
+  "tags": [
+    "continuity",
+    "configuration",
+    "dependency-failed",
+    "error"
+  ]
+}

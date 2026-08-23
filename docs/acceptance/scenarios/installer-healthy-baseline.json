@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "installer-healthy-baseline",
+  "domain": "installer",
+  "condition": "healthy-baseline",
+  "title": "Installer meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Installer reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Installer remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "installer",
+    "healthy-baseline",
+    "info"
+  ]
+}

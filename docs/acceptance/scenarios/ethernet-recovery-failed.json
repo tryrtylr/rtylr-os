@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "ethernet-recovery-failed",
+  "domain": "ethernet",
+  "condition": "recovery-failed",
+  "title": "Wired network did not recover",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Wired network remains failed after one bounded recovery attempt."
+  ],
+  "operator_steps": [
+    "Leave the recovery view open and stop retrying.",
+    "Escalate with the support code and last successful action."
+  ],
+  "admin_steps": [
+    "Collect diagnostics and use the documented support path."
+  ],
+  "success_criteria": [
+    "Wired network recovers once and remains healthy after refresh."
+  ],
+  "tags": [
+    "continuity",
+    "ethernet",
+    "recovery-failed",
+    "critical"
+  ]
+}

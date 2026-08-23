@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "storage-degraded",
+  "domain": "storage",
+  "condition": "degraded",
+  "title": "Local storage is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Local storage reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Local storage returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "storage",
+    "degraded",
+    "warning"
+  ]
+}

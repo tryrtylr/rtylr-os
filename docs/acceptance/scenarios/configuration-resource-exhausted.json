@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "configuration-resource-exhausted",
+  "domain": "configuration",
+  "condition": "resource-exhausted",
+  "title": "Rtylr configuration has exhausted a resource",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Rtylr configuration reports insufficient local capacity."
+  ],
+  "operator_steps": [
+    "Stop starting new work on the affected capability.",
+    "Preserve the current status and support code."
+  ],
+  "admin_steps": [
+    "Free or restore the identified resource without deleting business data."
+  ],
+  "success_criteria": [
+    "Rtylr configuration reports safe capacity above the warning threshold."
+  ],
+  "tags": [
+    "continuity",
+    "configuration",
+    "resource-exhausted",
+    "critical"
+  ]
+}

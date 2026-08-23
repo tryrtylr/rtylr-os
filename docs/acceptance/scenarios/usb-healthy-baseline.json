@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "usb-healthy-baseline",
+  "domain": "usb",
+  "condition": "healthy-baseline",
+  "title": "USB peripherals meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "USB peripherals reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "USB peripherals remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "usb",
+    "healthy-baseline",
+    "info"
+  ]
+}

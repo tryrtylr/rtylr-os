@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "wifi-dependency-failed",
+  "domain": "wifi",
+  "condition": "dependency-failed",
+  "title": "Wi-Fi has a failed dependency",
+  "severity": "error",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Wi-Fi reports an upstream dependency failure."
+  ],
+  "operator_steps": [
+    "Review adjacent health cards for the upstream failure.",
+    "Keep the current error visible for support."
+  ],
+  "admin_steps": [
+    "Recover the named dependency before restarting this capability."
+  ],
+  "success_criteria": [
+    "Wi-Fi and its dependency both report healthy."
+  ],
+  "tags": [
+    "continuity",
+    "wifi",
+    "dependency-failed",
+    "error"
+  ]
+}

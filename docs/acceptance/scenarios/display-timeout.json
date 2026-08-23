@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "display-timeout",
+  "domain": "display",
+  "condition": "timeout",
+  "title": "Display output times out",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Display output does not complete within the expected interval."
+  ],
+  "operator_steps": [
+    "Wait for a definitive result before attempting another action.",
+    "Open status and confirm whether the dependency is still active."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Display output completes within the expected interval twice."
+  ],
+  "tags": [
+    "continuity",
+    "display",
+    "timeout",
+    "warning"
+  ]
+}

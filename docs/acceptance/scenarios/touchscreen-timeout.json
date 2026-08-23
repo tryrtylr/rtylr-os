@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "touchscreen-timeout",
+  "domain": "touchscreen",
+  "condition": "timeout",
+  "title": "Touch input times out",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Touch input does not complete within the expected interval."
+  ],
+  "operator_steps": [
+    "Wait for a definitive result before attempting another action.",
+    "Open status and confirm whether the dependency is still active."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Touch input completes within the expected interval twice."
+  ],
+  "tags": [
+    "continuity",
+    "touchscreen",
+    "timeout",
+    "warning"
+  ]
+}

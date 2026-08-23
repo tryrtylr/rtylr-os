@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "storage-resource-exhausted",
+  "domain": "storage",
+  "condition": "resource-exhausted",
+  "title": "Local storage has exhausted a resource",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Local storage reports insufficient local capacity."
+  ],
+  "operator_steps": [
+    "Stop starting new work on the affected capability.",
+    "Preserve the current status and support code."
+  ],
+  "admin_steps": [
+    "Free or restore the identified resource without deleting business data."
+  ],
+  "success_criteria": [
+    "Local storage reports safe capacity above the warning threshold."
+  ],
+  "tags": [
+    "continuity",
+    "storage",
+    "resource-exhausted",
+    "critical"
+  ]
+}

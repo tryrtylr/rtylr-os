@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "configuration-degraded",
+  "domain": "configuration",
+  "condition": "degraded",
+  "title": "Rtylr configuration is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Rtylr configuration reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Rtylr configuration returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "configuration",
+    "degraded",
+    "warning"
+  ]
+}
