@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "power-degraded",
+  "domain": "power",
+  "condition": "degraded",
+  "title": "Power controls is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Power controls reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Power controls returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "power",
+    "degraded",
+    "warning"
+  ]
+}
