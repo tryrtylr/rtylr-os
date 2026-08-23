@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "clock-intermittent",
+  "domain": "clock",
+  "condition": "intermittent",
+  "title": "System time is intermittent",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "System time changes repeatedly between healthy and unavailable."
+  ],
+  "operator_steps": [
+    "Record the time and support code when the state changes.",
+    "Do not repeat a write when the prior result is unknown."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "System time remains healthy through three consecutive checks."
+  ],
+  "tags": [
+    "continuity",
+    "clock",
+    "intermittent",
+    "warning"
+  ]
+}
