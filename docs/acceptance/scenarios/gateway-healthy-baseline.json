@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "gateway-healthy-baseline",
+  "domain": "gateway",
+  "condition": "healthy-baseline",
+  "title": "Default gateway meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Default gateway reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Default gateway remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "gateway",
+    "healthy-baseline",
+    "info"
+  ]
+}
