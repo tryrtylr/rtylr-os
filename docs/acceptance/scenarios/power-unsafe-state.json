@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "power-unsafe-state",
+  "domain": "power",
+  "condition": "unsafe-state",
+  "title": "Power controls is in an unsafe state",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Power controls cannot confirm whether the last operation completed safely."
+  ],
+  "operator_steps": [
+    "Stop using the affected capability immediately.",
+    "Do not repeat or reverse the unknown operation."
+  ],
+  "admin_steps": [
+    "Isolate the capability and escalate before restoring service."
+  ],
+  "success_criteria": [
+    "Power controls has a verified state and passes a non-destructive check."
+  ],
+  "tags": [
+    "continuity",
+    "power",
+    "unsafe-state",
+    "critical"
+  ]
+}
