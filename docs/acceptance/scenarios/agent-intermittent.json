@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "agent-intermittent",
+  "domain": "agent",
+  "condition": "intermittent",
+  "title": "Management agent is intermittent",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Management agent changes repeatedly between healthy and unavailable."
+  ],
+  "operator_steps": [
+    "Record the time and support code when the state changes.",
+    "Do not repeat a write when the prior result is unknown."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Management agent remains healthy through three consecutive checks."
+  ],
+  "tags": [
+    "continuity",
+    "agent",
+    "intermittent",
+    "warning"
+  ]
+}
