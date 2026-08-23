@@ -10,6 +10,7 @@ done < <(find "$ROOT_DIR/scripts" "$ROOT_DIR/config/kiosk" -type f -name '*.sh')
 
 for executable in \
   "$ROOT_DIR/scripts/build.sh" \
+  "$ROOT_DIR/scripts/check-scenarios.py" \
   "$ROOT_DIR/scripts/first-boot.sh" \
   "$ROOT_DIR/scripts/package-release.sh" \
   "$ROOT_DIR/scripts/validate-iso.sh" \
@@ -21,6 +22,7 @@ done
 python3 -m py_compile "$ROOT_DIR/src/rtylr-shell/rtylr-shell"
 python3 -m compileall -q "$ROOT_DIR/src/rtylr-shell/rtylr_shell"
 python3 -m json.tool "$ROOT_DIR/config/shell.json" >/dev/null
+python3 "$ROOT_DIR/scripts/check-scenarios.py"
 python3 "$ROOT_DIR/scripts/check-gtk-css.py" "$ROOT_DIR/src/rtylr-shell/rtylr_shell/style.css"
 python3 - "$ROOT_DIR" <<'PY'
 from configparser import ConfigParser
