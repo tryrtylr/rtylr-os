@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rtylr.com/schemas/acceptance-scenario-v1.json",
+  "title": "Rtylr OS acceptance scenario",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "domain",
+    "condition",
+    "title",
+    "severity",
+    "expected_status",
+    "requires_admin",
+    "offline_safe",
+    "signals",
+    "operator_steps",
+    "admin_steps",
+    "success_criteria",
+    "tags"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/slug"
+    },
+    "domain": {
+      "$ref": "#/$defs/slug"
+    },
+    "condition": {
+      "$ref": "#/$defs/slug"
+    },
+    "title": {
+      "$ref": "#/$defs/text"
+    },
+    "severity": {
+      "enum": ["info", "warning", "error", "critical"]
+    },
+    "expected_status": {
+      "enum": ["ok", "warning", "error", "neutral"]
+    },
+    "requires_admin": {
+      "type": "boolean"
+    },
+    "offline_safe": {
+      "type": "boolean"
+    },
+    "signals": {
+      "$ref": "#/$defs/steps"
+    },
+    "operator_steps": {
+      "$ref": "#/$defs/steps"
+    },
+    "admin_steps": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/text"
+      },
+      "uniqueItems": true
+    },
+    "success_criteria": {
+      "$ref": "#/$defs/steps"
+    },
+    "tags": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/slug"
+      },
+      "uniqueItems": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "requires_admin": {
+            "const": true
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "admin_steps": {
+            "minItems": 1
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/text"
+      },
+      "uniqueItems": true
+    }
+  }
+}
