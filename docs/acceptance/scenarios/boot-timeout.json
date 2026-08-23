@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "boot-timeout",
+  "domain": "boot",
+  "condition": "timeout",
+  "title": "Boot process times out",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Boot process does not complete within the expected interval."
+  ],
+  "operator_steps": [
+    "Wait for a definitive result before attempting another action.",
+    "Open status and confirm whether the dependency is still active."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Boot process completes within the expected interval twice."
+  ],
+  "tags": [
+    "continuity",
+    "boot",
+    "timeout",
+    "warning"
+  ]
+}
