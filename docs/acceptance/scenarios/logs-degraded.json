@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "logs-degraded",
+  "domain": "logs",
+  "condition": "degraded",
+  "title": "Operational logs is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Operational logs reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Operational logs returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "logs",
+    "degraded",
+    "warning"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "logs-recovery-failed",
+  "domain": "logs",
+  "condition": "recovery-failed",
+  "title": "Operational logs did not recover",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Operational logs remains failed after one bounded recovery attempt."
+  ],
+  "operator_steps": [
+    "Leave the recovery view open and stop retrying.",
+    "Escalate with the support code and last successful action."
+  ],
+  "admin_steps": [
+    "Collect diagnostics and use the documented support path."
+  ],
+  "success_criteria": [
+    "Operational logs recovers once and remains healthy after refresh."
+  ],
+  "tags": [
+    "continuity",
+    "logs",
+    "recovery-failed",
+    "critical"
+  ]
+}

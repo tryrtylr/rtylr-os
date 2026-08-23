@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "mouse-resource-exhausted",
+  "domain": "mouse",
+  "condition": "resource-exhausted",
+  "title": "Pointer input has exhausted a resource",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Pointer input reports insufficient local capacity."
+  ],
+  "operator_steps": [
+    "Stop starting new work on the affected capability.",
+    "Preserve the current status and support code."
+  ],
+  "admin_steps": [
+    "Free or restore the identified resource without deleting business data."
+  ],
+  "success_criteria": [
+    "Pointer input reports safe capacity above the warning threshold."
+  ],
+  "tags": [
+    "continuity",
+    "mouse",
+    "resource-exhausted",
+    "critical"
+  ]
+}

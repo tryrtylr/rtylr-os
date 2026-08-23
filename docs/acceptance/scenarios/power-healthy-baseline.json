@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "power-healthy-baseline",
+  "domain": "power",
+  "condition": "healthy-baseline",
+  "title": "Power controls meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Power controls reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Power controls remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "power",
+    "healthy-baseline",
+    "info"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "printing-recovery-failed",
+  "domain": "printing",
+  "condition": "recovery-failed",
+  "title": "Printing did not recover",
+  "severity": "critical",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Printing remains failed after one bounded recovery attempt."
+  ],
+  "operator_steps": [
+    "Leave the recovery view open and stop retrying.",
+    "Escalate with the support code and last successful action."
+  ],
+  "admin_steps": [
+    "Collect diagnostics and use the documented support path."
+  ],
+  "success_criteria": [
+    "Printing recovers once and remains healthy after refresh."
+  ],
+  "tags": [
+    "continuity",
+    "printing",
+    "recovery-failed",
+    "critical"
+  ]
+}
