@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "ethernet-healthy-baseline",
+  "domain": "ethernet",
+  "condition": "healthy-baseline",
+  "title": "Wired network meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Wired network reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Wired network remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "ethernet",
+    "healthy-baseline",
+    "info"
+  ]
+}
