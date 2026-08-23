@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "wifi-healthy-baseline",
+  "domain": "wifi",
+  "condition": "healthy-baseline",
+  "title": "Wi-Fi meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Wi-Fi reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Wi-Fi remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "wifi",
+    "healthy-baseline",
+    "info"
+  ]
+}

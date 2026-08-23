@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "updates-degraded",
+  "domain": "updates",
+  "condition": "degraded",
+  "title": "System updates is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "System updates reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "System updates returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "updates",
+    "degraded",
+    "warning"
+  ]
+}

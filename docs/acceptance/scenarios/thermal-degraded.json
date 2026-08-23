@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "thermal-degraded",
+  "domain": "thermal",
+  "condition": "degraded",
+  "title": "Thermal state is degraded",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Thermal state reports degraded service."
+  ],
+  "operator_steps": [
+    "Finish only the current safe action before opening status.",
+    "Use an unaffected workflow until the warning clears."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Thermal state returns to healthy without a new warning."
+  ],
+  "tags": [
+    "continuity",
+    "thermal",
+    "degraded",
+    "warning"
+  ]
+}
