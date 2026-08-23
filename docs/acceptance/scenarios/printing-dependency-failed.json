@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "printing-dependency-failed",
+  "domain": "printing",
+  "condition": "dependency-failed",
+  "title": "Printing has a failed dependency",
+  "severity": "error",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Printing reports an upstream dependency failure."
+  ],
+  "operator_steps": [
+    "Review adjacent health cards for the upstream failure.",
+    "Keep the current error visible for support."
+  ],
+  "admin_steps": [
+    "Recover the named dependency before restarting this capability."
+  ],
+  "success_criteria": [
+    "Printing and its dependency both report healthy."
+  ],
+  "tags": [
+    "continuity",
+    "printing",
+    "dependency-failed",
+    "error"
+  ]
+}
