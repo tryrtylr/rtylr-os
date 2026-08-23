@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "clock-timeout",
+  "domain": "clock",
+  "condition": "timeout",
+  "title": "System time times out",
+  "severity": "warning",
+  "expected_status": "warning",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "System time does not complete within the expected interval."
+  ],
+  "operator_steps": [
+    "Wait for a definitive result before attempting another action.",
+    "Open status and confirm whether the dependency is still active."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "System time completes within the expected interval twice."
+  ],
+  "tags": [
+    "continuity",
+    "clock",
+    "timeout",
+    "warning"
+  ]
+}
