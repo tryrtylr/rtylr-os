@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "mouse-dependency-failed",
+  "domain": "mouse",
+  "condition": "dependency-failed",
+  "title": "Pointer input has a failed dependency",
+  "severity": "error",
+  "expected_status": "error",
+  "requires_admin": true,
+  "offline_safe": false,
+  "signals": [
+    "Pointer input reports an upstream dependency failure."
+  ],
+  "operator_steps": [
+    "Review adjacent health cards for the upstream failure.",
+    "Keep the current error visible for support."
+  ],
+  "admin_steps": [
+    "Recover the named dependency before restarting this capability."
+  ],
+  "success_criteria": [
+    "Pointer input and its dependency both report healthy."
+  ],
+  "tags": [
+    "continuity",
+    "mouse",
+    "dependency-failed",
+    "error"
+  ]
+}
