@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "agent-healthy-baseline",
+  "domain": "agent",
+  "condition": "healthy-baseline",
+  "title": "Management agent meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": false,
+  "signals": [
+    "Management agent reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Management agent remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "agent",
+    "healthy-baseline",
+    "info"
+  ]
+}
