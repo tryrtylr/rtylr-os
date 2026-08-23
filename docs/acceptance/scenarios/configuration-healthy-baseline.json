@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "configuration-healthy-baseline",
+  "domain": "configuration",
+  "condition": "healthy-baseline",
+  "title": "Rtylr configuration meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Rtylr configuration reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Rtylr configuration remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "configuration",
+    "healthy-baseline",
+    "info"
+  ]
+}
