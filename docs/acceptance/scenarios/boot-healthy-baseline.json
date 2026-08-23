@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "boot-healthy-baseline",
+  "domain": "boot",
+  "condition": "healthy-baseline",
+  "title": "Boot process meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Boot process reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Boot process remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "boot",
+    "healthy-baseline",
+    "info"
+  ]
+}
