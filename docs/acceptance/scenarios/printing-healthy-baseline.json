@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "id": "printing-healthy-baseline",
+  "domain": "printing",
+  "condition": "healthy-baseline",
+  "title": "Printing meets its healthy baseline",
+  "severity": "info",
+  "expected_status": "ok",
+  "requires_admin": false,
+  "offline_safe": true,
+  "signals": [
+    "Printing reports healthy with no active warning."
+  ],
+  "operator_steps": [
+    "Confirm the health summary is understandable at a glance.",
+    "Continue normal work without opening protected controls."
+  ],
+  "admin_steps": [],
+  "success_criteria": [
+    "Printing remains healthy after an ordinary refresh."
+  ],
+  "tags": [
+    "continuity",
+    "printing",
+    "healthy-baseline",
+    "info"
+  ]
+}
