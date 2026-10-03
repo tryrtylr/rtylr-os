@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Rtylr Kiosk
+Comment=Rtylr POS kiosk session
+Exec=/usr/local/lib/rtylr/session.sh
+Type=Application

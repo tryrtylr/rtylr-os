@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-required=(curl sha256sum xorriso bsdtar rsync)
+required=(curl sha256sum md5sum xorriso gpg perl paste)
 missing=()
 for command_name in "${required[@]}"; do
-  command -v "$command_name" >/dev/null 2>&1 || missing+=("$command_name")
+  command -v "$command_name" > /dev/null 2>&1 || missing+=("$command_name")
 done
 
 if ((${#missing[@]})); then
