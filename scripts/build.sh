@@ -29,21 +29,47 @@ xorriso -osirrox on -indev "$BASE" \
   -extract /boot/grub/grub.cfg "$WORK_DIR/boot/grub/grub.cfg" \
   >/dev/null 2>&1
 
+chmod u+w "$WORK_DIR/boot/grub/grub.cfg"
+
+# Render the autoinstall user-data from config/autoinstall.yaml.
+RTYLR_PACKAGES="[$(grep -vE '^[[:space:]]*(#|$)' "$ROOT_DIR/config/packages.list" | paste -sd, - | sed 's/,/, /g')]"
+RTYLR_SHUTDOWN=reboot
+RTYLR_EXTRA_LATE=''
+if [[ "${RTYLR_TEST_BUILD:-}" == "1" ]]; then
+  # Test images power off after install and log to the serial console so
+  # scripts/test-vm.sh can drive them headlessly. Never ship these.
+  RTYLR_SHUTDOWN=poweroff
+  # shellcheck disable=SC2016,SC2089
+  RTYLR_EXTRA_LATE=$'    - sed -i \'s/^GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="console=ttyS0,115200n8"/\' /target/etc/default/grub\n    - curtin in-target -- update-grub\n'
+  printf 'WARNING: building a TEST image (serial console, poweroff after install).\n' >&2
+fi
+RTYLR_INSTALL_PASSWORD_HASH="$INSTALL_PASSWORD_HASH"
+# shellcheck disable=SC2090
+export RTYLR_PACKAGES RTYLR_SHUTDOWN RTYLR_EXTRA_LATE RTYLR_INSTALL_PASSWORD_HASH
 mkdir -p "$WORK_DIR/nocloud"
-sed "s|__RTYLR_INSTALL_PASSWORD_HASH__|${INSTALL_PASSWORD_HASH}|g" \
-  "$ROOT_DIR/config/autoinstall.yaml" > "$WORK_DIR/nocloud/user-data"
+perl -pe '
+  s/__RTYLR_INSTALL_PASSWORD_HASH__/$ENV{RTYLR_INSTALL_PASSWORD_HASH}/g;
+  s/__RTYLR_PACKAGES__/$ENV{RTYLR_PACKAGES}/g;
+  s/__RTYLR_SHUTDOWN__/$ENV{RTYLR_SHUTDOWN}/g;
+  s/^[ \t]*# __RTYLR_EXTRA_LATE_COMMANDS__\n/$ENV{RTYLR_EXTRA_LATE}/;
+' "$ROOT_DIR/config/autoinstall.yaml" > "$WORK_DIR/nocloud/user-data"
 : > "$WORK_DIR/nocloud/meta-data"
-if grep -q '__RTYLR_INSTALL_PASSWORD_HASH__' "$WORK_DIR/nocloud/user-data"; then
-  printf 'Password placeholder remained in generated autoinstall data.\n' >&2
+if grep -q '__RTYLR_' "$WORK_DIR/nocloud/user-data"; then
+  printf 'Unrendered placeholder remained in generated autoinstall data.\n' >&2
   exit 1
 fi
 
-if [[ -f "$WORK_DIR/boot/grub/grub.cfg" ]]; then
-  perl -0pi -e 's/(\s+linux\s+[^\n]*?)(\s+---|\s+quiet)/$1 autoinstall ds=nocloud\\;s=\/cdrom\/nocloud\/ $2/g' "$WORK_DIR/boot/grub/grub.cfg"
-else
-  printf 'Ubuntu ISO does not contain boot/grub/grub.cfg\n' >&2
+perl -pi -e 's{^(\s*linux\s+\S+.*?)\s+---}{$1 autoinstall ds=nocloud\\;s=/cdrom/nocloud/ ---}' "$WORK_DIR/boot/grub/grub.cfg"
+grep -Fq 'autoinstall ds=nocloud' "$WORK_DIR/boot/grub/grub.cfg" || {
+  printf 'Failed to patch grub.cfg: no kernel line matched; the Ubuntu ISO layout may have changed.\n' >&2
   exit 1
-fi
+}
+
+# Keep the installer media integrity list consistent with the patched file.
+xorriso -osirrox on -indev "$BASE" -extract /md5sum.txt "$WORK_DIR/md5sum.txt" >/dev/null 2>&1
+chmod u+w "$WORK_DIR/md5sum.txt"
+MD5="$(md5sum "$WORK_DIR/boot/grub/grub.cfg" | cut -d' ' -f1)" \
+  perl -pi -e 's{^\S+(\s+\./boot/grub/grub\.cfg)$}{$ENV{MD5}$1}' "$WORK_DIR/md5sum.txt"
 
 # Stage only source assets needed by the appliance. Development bytecode can be
 # incompatible with the target Python version and does not belong in the ISO.
@@ -60,6 +86,7 @@ xorriso \
   -outdev "$OUTPUT" \
   -boot_image any replay \
   -map "$WORK_DIR/boot/grub/grub.cfg" /boot/grub/grub.cfg \
+  -map "$WORK_DIR/md5sum.txt" /md5sum.txt \
   -map "$WORK_DIR/nocloud" /nocloud \
   -map "$ROOT_DIR/config" /rtylr-config \
   -map "$SHELL_STAGE" /rtylr-shell \

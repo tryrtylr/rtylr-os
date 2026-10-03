@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-required=(curl sha256sum xorriso bsdtar rsync split stat)
+required=(curl sha256sum md5sum xorriso bsdtar rsync gpg perl paste split stat)
 missing=()
 for command_name in "${required[@]}"; do
   command -v "$command_name" >/dev/null 2>&1 || missing+=("$command_name")

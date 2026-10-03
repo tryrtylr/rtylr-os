@@ -73,7 +73,7 @@ On Ubuntu 24.04 or newer:
 
 ```bash
 sudo apt-get update
-sudo apt-get install -y curl libarchive-tools python3-yaml rsync xorriso
+sudo apt-get install -y curl gpg libarchive-tools perl python3-yaml rsync xorriso
 
 make check
 make check-build
@@ -96,6 +96,19 @@ RTYLR_INSTALL_PASSWORD_HASH='$6$...' make iso
 
 The target device needs network access during installation so Subiquity can
 install the graphical shell and common business-peripheral packages.
+
+### Installer smoke test
+
+`make lint` runs `shellcheck` and `yamllint`. `make test-vm` builds a test image
+(`RTYLR_TEST_BUILD=1`: serial console, powers off after install), runs the
+unattended install in QEMU/OVMF, boots the result, and checks that first-boot
+provisioning ran and the graphical target was reached. It needs
+`qemu-system-x86`, `qemu-utils`, and `ovmf`. Never ship a test image.
+
+Base-image verification checks the GPG signature on Ubuntu's `SHA256SUMS`
+against pinned signing keys before trusting any checksum. Override the pinned
+fingerprints with `RTYLR_UBUNTU_SIGNING_FPRS` if Ubuntu rotates the key. The
+autoinstall package list is generated from `config/packages.list`.
 
 ## Automated ISO releases
 

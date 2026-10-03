@@ -1,10 +1,14 @@
 SHELL := /bin/bash
 VERSION := $(strip $(shell cat VERSION))
 
-.PHONY: check check-build test download verify iso validate-iso package-release print-version clean
+.PHONY: check lint check-build test download verify iso validate-iso test-iso test-vm package-release print-version clean
 
 check:
 	./scripts/check-source.sh
+
+lint:
+	shellcheck scripts/*.sh config/kiosk/session.sh
+	yamllint -c .yamllint config/autoinstall.yaml
 
 check-build:
 	./scripts/check-dependencies.sh
@@ -23,6 +27,14 @@ iso: check check-build download verify
 
 validate-iso:
 	./scripts/validate-iso.sh
+
+# Builds a serial-console/poweroff test image and runs the QEMU smoke test.
+# Needs the build dependencies; RTYLR_INSTALL_PASSWORD_HASH is optional.
+test-iso: check-build download verify
+	RTYLR_TEST_BUILD=1 ./scripts/build.sh
+
+test-vm: test-iso
+	./scripts/test-vm.sh
 
 package-release: validate-iso
 	./scripts/package-release.sh
