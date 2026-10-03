@@ -1,6 +1,6 @@
 #cloud-config
 # Rtylr OS appliance installer. No production secrets belong here.
-# __RTYLR_*__ placeholders are rendered by scripts/build.sh.
+# Placeholders in double underscores are rendered by scripts/build.sh.
 autoinstall:
   version: 1
   locale: en_US.UTF-8
